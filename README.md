@@ -107,10 +107,12 @@ Para usar una base PostgreSQL local existente, configura `backend/.env` con los 
 DB_CONNECTION=pgsql
 DB_HOST=127.0.0.1
 DB_PORT=5432
-DB_DATABASE=industrias_ciclon_db
+DB_DATABASE=news_agentic
 DB_USERNAME=postgres
 DB_PASSWORD=tu-password-local
 ```
+
+Usa una base dedicada como `news_agentic` para evitar conflictos con tablas existentes.
 
 Setup backend automatizado en Windows:
 

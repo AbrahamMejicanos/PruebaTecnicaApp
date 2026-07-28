@@ -187,7 +187,16 @@ DB_USERNAME=usuario
 DB_PASSWORD=password
 ```
 
-Para tu base local, el nombre de base seria:
+Para pruebas locales se recomienda una base dedicada para esta app, por ejemplo:
+
+```env
+DB_DATABASE=news_agentic
+DB_USERNAME=postgres
+```
+
+Si decides usar una base existente, como `industrias_ciclon_db`, asegurate de que no tenga tablas con los mismos nombres (`users`, `roles`, `categories`, `news`, etc.) o usa una base separada para evitar conflictos.
+
+Tu base local existente se configuraria asi:
 
 ```env
 DB_DATABASE=industrias_ciclon_db
@@ -238,5 +247,5 @@ php artisan test
 Estado actual esperado:
 
 ```text
-14 tests passed
+17 tests passed
 ```
