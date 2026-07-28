@@ -18,6 +18,14 @@ Ejecuta primero:
 
 Ese request guarda automaticamente `token` en el environment. Despues puedes ejecutar los endpoints protegidos.
 
+La coleccion incluye requests para:
+
+- Filtros de noticias con `date_from`, `date_to`, busqueda y paginacion.
+- Noticias por categoria en `GET /categories/{id}/news`.
+- CRUD de noticias para editor/administrador/superusuario.
+- Gestion de roles/usuarios para administrador/superusuario.
+- Favoritos propios del usuario autenticado.
+
 Para validar seguridad:
 
 - `04 Security / Sin token - noticias bloqueado`

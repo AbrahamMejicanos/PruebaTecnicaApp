@@ -1,687 +1,1042 @@
 {
-  "info": {
-    "_postman_id": "a0f67812-3e0c-4f58-82d7-bc44c4bbff4e",
-    "name": "NewsAgenticApp API",
-    "description": "Coleccion completa para probar la API Laravel/JWT de NewsAgenticApp. Ejecuta primero Login correcto para guardar el token en el environment.",
-    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-  },
-  "auth": {
-    "type": "bearer",
-    "bearer": [
-      {
-        "key": "token",
-        "value": "{{token}}",
-        "type": "string"
-      }
-    ]
-  },
-  "event": [
-    {
-      "listen": "prerequest",
-      "script": {
-        "type": "text/javascript",
-        "exec": [
-          "pm.request.headers.upsert({ key: 'Accept', value: 'application/json' });"
-        ]
-      }
-    }
-  ],
-  "item": [
-    {
-      "name": "01 Auth",
-      "item": [
-        {
-          "name": "Login correcto - guarda token",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Status 200', function () {",
-                  "  pm.response.to.have.status(200);",
-                  "});",
-                  "",
-                  "const json = pm.response.json();",
-                  "pm.test('Respuesta incluye token', function () {",
-                  "  pm.expect(json.data.token).to.be.a('string').and.not.empty;",
-                  "  pm.expect(json.data.token_type).to.eql('bearer');",
-                  "});",
-                  "",
-                  "pm.test('Usuario autenticado con rol superuser', function () {",
-                  "  pm.expect(json.data.user.email).to.eql(pm.environment.get('email'));",
-                  "  pm.expect(json.data.user.role.slug).to.eql('superuser');",
-                  "});",
-                  "",
-                  "pm.environment.set('token', json.data.token);"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "auth": {
-              "type": "noauth"
-            },
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              },
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{base_url}}/login",
-              "host": [
-                "{{base_url}}"
+    "info":  {
+                 "_postman_id":  "a0f67812-3e0c-4f58-82d7-bc44c4bbff4e",
+                 "name":  "NewsAgenticApp API",
+                 "description":  "Coleccion completa para probar la API Laravel/JWT de NewsAgenticApp. Ejecuta primero Login correcto para guardar el token en el environment.",
+                 "schema":  "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+             },
+    "auth":  {
+                 "type":  "bearer",
+                 "bearer":  [
+                                {
+                                    "key":  "token",
+                                    "value":  "{{token}}",
+                                    "type":  "string"
+                                }
+                            ]
+             },
+    "event":  [
+                  {
+                      "listen":  "prerequest",
+                      "script":  {
+                                     "type":  "text/javascript",
+                                     "exec":  [
+                                                  "pm.request.headers.upsert({ key: \u0027Accept\u0027, value: \u0027application/json\u0027 });"
+                                              ]
+                                 }
+                  }
               ],
-              "path": [
-                "login"
-              ]
-            }
-          }
-        },
-        {
-          "name": "Login incorrecto",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Status 401', function () {",
-                  "  pm.response.to.have.status(401);",
-                  "});",
-                  "pm.test('Credenciales invalidas', function () {",
-                  "  pm.expect(pm.response.json().message).to.eql('Credenciales invalidas.');",
-                  "});"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "auth": {
-              "type": "noauth"
-            },
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              },
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"password-incorrecto\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{base_url}}/login",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "login"
-              ]
-            }
-          }
-        },
-        {
-          "name": "Login payload invalido",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Status 422', function () {",
-                  "  pm.response.to.have.status(422);",
-                  "});",
-                  "pm.test('Errores de email y password', function () {",
-                  "  const json = pm.response.json();",
-                  "  pm.expect(json.errors.email).to.exist;",
-                  "  pm.expect(json.errors.password).to.exist;",
-                  "});"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "auth": {
-              "type": "noauth"
-            },
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              },
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"email\": \"correo-invalido\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{base_url}}/login",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "login"
-              ]
-            }
-          }
-        },
-        {
-          "name": "Me - usuario autenticado",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Status 200', function () {",
-                  "  pm.response.to.have.status(200);",
-                  "});",
-                  "pm.test('Devuelve usuario y rol', function () {",
-                  "  const json = pm.response.json();",
-                  "  pm.expect(json.data.email).to.eql(pm.environment.get('email'));",
-                  "  pm.expect(json.data.role.slug).to.eql('superuser');",
-                  "});"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{base_url}}/me",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "me"
-              ]
-            }
-          }
-        },
-        {
-          "name": "Logout - invalida token",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Status 200', function () {",
-                  "  pm.response.to.have.status(200);",
-                  "});",
-                  "pm.test('Sesion cerrada', function () {",
-                  "  pm.expect(pm.response.json().message).to.eql('Sesion cerrada.');",
-                  "  pm.expect(pm.response.json().data.user.email).to.eql(pm.environment.get('email'));",
-                  "});"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{base_url}}/logout",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "logout"
-              ]
-            }
-          }
-        }
-      ]
-    },
-    {
-      "name": "02 News",
-      "item": [
-        {
-          "name": "Listar noticias",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Status 200', function () { pm.response.to.have.status(200); });",
-                  "pm.test('Devuelve al menos 5 noticias', function () {",
-                  "  const json = pm.response.json();",
-                  "  pm.expect(json.data).to.be.an('array');",
-                  "  pm.expect(json.data.length).to.be.at.least(5);",
-                  "});",
-                  "pm.test('Primera noticia tiene estructura de card', function () {",
-                  "  const item = pm.response.json().data[0];",
-                  "  pm.expect(item).to.include.keys(['id', 'title', 'image_url', 'excerpt', 'published_at', 'category']);",
-                  "});"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{base_url}}/news",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "news"
-              ]
-            }
-          }
-        },
-        {
-          "name": "Detalle noticia",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Status 200', function () { pm.response.to.have.status(200); });",
-                  "pm.test('Detalle incluye body y categoria', function () {",
-                  "  const item = pm.response.json().data;",
-                  "  pm.expect(item).to.include.keys(['id', 'title', 'image_url', 'excerpt', 'body', 'published_at', 'category']);",
-                  "  pm.expect(item.category).to.include.keys(['id', 'name', 'description']);",
-                  "});"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{base_url}}/news/{{news_id}}",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "news",
-                "{{news_id}}"
-              ]
-            }
-          }
-        },
-        {
-          "name": "Noticias recomendadas",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Status 200', function () { pm.response.to.have.status(200); });",
-                  "pm.test('Devuelve 3 recomendadas', function () {",
-                  "  const json = pm.response.json();",
-                  "  pm.expect(json.data).to.be.an('array');",
-                  "  pm.expect(json.data.length).to.eql(3);",
-                  "});",
-                  "pm.test('Recomendadas no incluyen body completo', function () {",
-                  "  pm.expect(pm.response.json().data[0]).to.not.have.property('body');",
-                  "});"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{base_url}}/news/{{news_id}}/recommended",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "news",
-                "{{news_id}}",
-                "recommended"
-              ]
-            }
-          }
-        },
-        {
-          "name": "Noticia inexistente",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Status 404', function () { pm.response.to.have.status(404); });",
-                  "pm.test('Mensaje correcto', function () {",
-                  "  pm.expect(pm.response.json().message).to.eql('Noticia no encontrada.');",
-                  "});"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{base_url}}/news/{{missing_news_id}}",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "news",
-                "{{missing_news_id}}"
-              ]
-            }
-          }
-        },
-        {
-          "name": "Recomendadas de noticia inexistente",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Status 404', function () { pm.response.to.have.status(404); });",
-                  "pm.test('Mensaje correcto', function () {",
-                  "  pm.expect(pm.response.json().message).to.eql('Noticia no encontrada.');",
-                  "});"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{base_url}}/news/{{missing_news_id}}/recommended",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "news",
-                "{{missing_news_id}}",
-                "recommended"
-              ]
-            }
-          }
-        }
-      ]
-    },
-    {
-      "name": "03 Categories",
-      "item": [
-        {
-          "name": "Listar categorias",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Status 200', function () { pm.response.to.have.status(200); });",
-                  "pm.test('Devuelve 3 categorias', function () {",
-                  "  const json = pm.response.json();",
-                  "  pm.expect(json.data).to.be.an('array');",
-                  "  pm.expect(json.data.length).to.eql(3);",
-                  "});"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{base_url}}/categories",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "categories"
-              ]
-            }
-          }
-        }
-      ]
-    },
-    {
-      "name": "04 Security",
-      "item": [
-        {
-          "name": "Sin token - noticias bloqueado",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Status 401', function () { pm.response.to.have.status(401); });",
-                  "pm.test('Token ausente', function () {",
-                  "  pm.expect(pm.response.json().message).to.eql('Token ausente o no autenticado.');",
-                  "});"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "auth": {
-              "type": "noauth"
-            },
-            "method": "GET",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{base_url}}/news",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "news"
-              ]
-            }
-          }
-        },
-        {
-          "name": "Sin token - categorias bloqueado",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Status 401', function () { pm.response.to.have.status(401); });",
-                  "pm.test('Token ausente', function () {",
-                  "  pm.expect(pm.response.json().message).to.eql('Token ausente o no autenticado.');",
-                  "});"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "auth": {
-              "type": "noauth"
-            },
-            "method": "GET",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{base_url}}/categories",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "categories"
-              ]
-            }
-          }
-        },
-        {
-          "name": "Token invalido - noticias bloqueado",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Status 401', function () { pm.response.to.have.status(401); });",
-                  "pm.test('Token invalido', function () {",
-                  "  pm.expect(pm.response.json().message).to.eql('Token invalido.');",
-                  "});"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "token-invalido",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "GET",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{base_url}}/news",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "news"
-              ]
-            }
-          }
-        },
-        {
-          "name": "Despues de logout - token viejo bloqueado",
-          "description": "Ejecuta primero Login correcto, luego Logout, y finalmente este request.",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Status 401', function () { pm.response.to.have.status(401); });",
-                  "pm.test('Token queda invalidado despues de logout', function () {",
-                  "  pm.expect(pm.response.json().message).to.eql('Token invalido.');",
-                  "});"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{base_url}}/me",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "me"
-              ]
-            }
-          }
-        }
-      ]
-    }
-  ]
+    "item":  [
+                 {
+                     "name":  "01 Auth",
+                     "item":  [
+                                  {
+                                      "name":  "Login correcto - guarda token",
+                                      "event":  [
+                                                    {
+                                                        "listen":  "test",
+                                                        "script":  {
+                                                                       "type":  "text/javascript",
+                                                                       "exec":  [
+                                                                                    "pm.test(\u0027Status 200\u0027, function () {",
+                                                                                    "  pm.response.to.have.status(200);",
+                                                                                    "});",
+                                                                                    "",
+                                                                                    "const json = pm.response.json();",
+                                                                                    "pm.test(\u0027Respuesta incluye token\u0027, function () {",
+                                                                                    "  pm.expect(json.data.token).to.be.a(\u0027string\u0027).and.not.empty;",
+                                                                                    "  pm.expect(json.data.token_type).to.eql(\u0027bearer\u0027);",
+                                                                                    "});",
+                                                                                    "",
+                                                                                    "pm.test(\u0027Usuario autenticado con rol superuser\u0027, function () {",
+                                                                                    "  pm.expect(json.data.user.email).to.eql(pm.environment.get(\u0027email\u0027));",
+                                                                                    "  pm.expect(json.data.user.role.slug).to.eql(\u0027superuser\u0027);",
+                                                                                    "});",
+                                                                                    "",
+                                                                                    "pm.environment.set(\u0027token\u0027, json.data.token);"
+                                                                                ]
+                                                                   }
+                                                    }
+                                                ],
+                                      "request":  {
+                                                      "auth":  {
+                                                                   "type":  "noauth"
+                                                               },
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     },
+                                                                     {
+                                                                         "key":  "Accept",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "raw",
+                                                                   "raw":  "{\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\"\n}",
+                                                                   "options":  {
+                                                                                   "raw":  {
+                                                                                               "language":  "json"
+                                                                                           }
+                                                                               }
+                                                               },
+                                                      "url":  {
+                                                                  "raw":  "{{base_url}}/login",
+                                                                  "host":  [
+                                                                               "{{base_url}}"
+                                                                           ],
+                                                                  "path":  [
+                                                                               "login"
+                                                                           ]
+                                                              }
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Login incorrecto",
+                                      "event":  [
+                                                    {
+                                                        "listen":  "test",
+                                                        "script":  {
+                                                                       "type":  "text/javascript",
+                                                                       "exec":  [
+                                                                                    "pm.test(\u0027Status 401\u0027, function () {",
+                                                                                    "  pm.response.to.have.status(401);",
+                                                                                    "});",
+                                                                                    "pm.test(\u0027Credenciales invalidas\u0027, function () {",
+                                                                                    "  pm.expect(pm.response.json().message).to.eql(\u0027Credenciales invalidas.\u0027);",
+                                                                                    "});"
+                                                                                ]
+                                                                   }
+                                                    }
+                                                ],
+                                      "request":  {
+                                                      "auth":  {
+                                                                   "type":  "noauth"
+                                                               },
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     },
+                                                                     {
+                                                                         "key":  "Accept",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "raw",
+                                                                   "raw":  "{\n  \"email\": \"{{email}}\",\n  \"password\": \"password-incorrecto\"\n}",
+                                                                   "options":  {
+                                                                                   "raw":  {
+                                                                                               "language":  "json"
+                                                                                           }
+                                                                               }
+                                                               },
+                                                      "url":  {
+                                                                  "raw":  "{{base_url}}/login",
+                                                                  "host":  [
+                                                                               "{{base_url}}"
+                                                                           ],
+                                                                  "path":  [
+                                                                               "login"
+                                                                           ]
+                                                              }
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Login payload invalido",
+                                      "event":  [
+                                                    {
+                                                        "listen":  "test",
+                                                        "script":  {
+                                                                       "type":  "text/javascript",
+                                                                       "exec":  [
+                                                                                    "pm.test(\u0027Status 422\u0027, function () {",
+                                                                                    "  pm.response.to.have.status(422);",
+                                                                                    "});",
+                                                                                    "pm.test(\u0027Errores de email y password\u0027, function () {",
+                                                                                    "  const json = pm.response.json();",
+                                                                                    "  pm.expect(json.errors.email).to.exist;",
+                                                                                    "  pm.expect(json.errors.password).to.exist;",
+                                                                                    "});"
+                                                                                ]
+                                                                   }
+                                                    }
+                                                ],
+                                      "request":  {
+                                                      "auth":  {
+                                                                   "type":  "noauth"
+                                                               },
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     },
+                                                                     {
+                                                                         "key":  "Accept",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "raw",
+                                                                   "raw":  "{\n  \"email\": \"correo-invalido\"\n}",
+                                                                   "options":  {
+                                                                                   "raw":  {
+                                                                                               "language":  "json"
+                                                                                           }
+                                                                               }
+                                                               },
+                                                      "url":  {
+                                                                  "raw":  "{{base_url}}/login",
+                                                                  "host":  [
+                                                                               "{{base_url}}"
+                                                                           ],
+                                                                  "path":  [
+                                                                               "login"
+                                                                           ]
+                                                              }
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Me - usuario autenticado",
+                                      "event":  [
+                                                    {
+                                                        "listen":  "test",
+                                                        "script":  {
+                                                                       "type":  "text/javascript",
+                                                                       "exec":  [
+                                                                                    "pm.test(\u0027Status 200\u0027, function () {",
+                                                                                    "  pm.response.to.have.status(200);",
+                                                                                    "});",
+                                                                                    "pm.test(\u0027Devuelve usuario y rol\u0027, function () {",
+                                                                                    "  const json = pm.response.json();",
+                                                                                    "  pm.expect(json.data.email).to.eql(pm.environment.get(\u0027email\u0027));",
+                                                                                    "  pm.expect(json.data.role.slug).to.eql(\u0027superuser\u0027);",
+                                                                                    "});"
+                                                                                ]
+                                                                   }
+                                                    }
+                                                ],
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Accept",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "url":  {
+                                                                  "raw":  "{{base_url}}/me",
+                                                                  "host":  [
+                                                                               "{{base_url}}"
+                                                                           ],
+                                                                  "path":  [
+                                                                               "me"
+                                                                           ]
+                                                              }
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Logout - invalida token",
+                                      "event":  [
+                                                    {
+                                                        "listen":  "test",
+                                                        "script":  {
+                                                                       "type":  "text/javascript",
+                                                                       "exec":  [
+                                                                                    "pm.test(\u0027Status 200\u0027, function () {",
+                                                                                    "  pm.response.to.have.status(200);",
+                                                                                    "});",
+                                                                                    "pm.test(\u0027Sesion cerrada\u0027, function () {",
+                                                                                    "  pm.expect(pm.response.json().message).to.eql(\u0027Sesion cerrada.\u0027);",
+                                                                                    "  pm.expect(pm.response.json().data.user.email).to.eql(pm.environment.get(\u0027email\u0027));",
+                                                                                    "});"
+                                                                                ]
+                                                                   }
+                                                    }
+                                                ],
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Accept",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "url":  {
+                                                                  "raw":  "{{base_url}}/logout",
+                                                                  "host":  [
+                                                                               "{{base_url}}"
+                                                                           ],
+                                                                  "path":  [
+                                                                               "logout"
+                                                                           ]
+                                                              }
+                                                  }
+                                  }
+                              ]
+                 },
+                 {
+                     "name":  "02 News",
+                     "item":  [
+                                  {
+                                      "name":  "Listar noticias",
+                                      "event":  [
+                                                    {
+                                                        "listen":  "test",
+                                                        "script":  {
+                                                                       "type":  "text/javascript",
+                                                                       "exec":  [
+                                                                                    "pm.test(\u0027Status 200\u0027, function () { pm.response.to.have.status(200); });",
+                                                                                    "pm.test(\u0027Devuelve al menos 5 noticias\u0027, function () {",
+                                                                                    "  const json = pm.response.json();",
+                                                                                    "  pm.expect(json.data).to.be.an(\u0027array\u0027);",
+                                                                                    "  pm.expect(json.data.length).to.be.at.least(5);",
+                                                                                    "});",
+                                                                                    "pm.test(\u0027Primera noticia tiene estructura de card\u0027, function () {",
+                                                                                    "  const item = pm.response.json().data[0];",
+                                                                                    "  pm.expect(item).to.include.keys([\u0027id\u0027, \u0027title\u0027, \u0027image_url\u0027, \u0027excerpt\u0027, \u0027published_at\u0027, \u0027category\u0027]);",
+                                                                                    "});"
+                                                                                ]
+                                                                   }
+                                                    }
+                                                ],
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Accept",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "url":  {
+                                                                  "raw":  "{{base_url}}/news",
+                                                                  "host":  [
+                                                                               "{{base_url}}"
+                                                                           ],
+                                                                  "path":  [
+                                                                               "news"
+                                                                           ]
+                                                              }
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Detalle noticia",
+                                      "event":  [
+                                                    {
+                                                        "listen":  "test",
+                                                        "script":  {
+                                                                       "type":  "text/javascript",
+                                                                       "exec":  [
+                                                                                    "pm.test(\u0027Status 200\u0027, function () { pm.response.to.have.status(200); });",
+                                                                                    "pm.test(\u0027Detalle incluye body y categoria\u0027, function () {",
+                                                                                    "  const item = pm.response.json().data;",
+                                                                                    "  pm.expect(item).to.include.keys([\u0027id\u0027, \u0027title\u0027, \u0027image_url\u0027, \u0027excerpt\u0027, \u0027body\u0027, \u0027published_at\u0027, \u0027category\u0027]);",
+                                                                                    "  pm.expect(item.category).to.include.keys([\u0027id\u0027, \u0027name\u0027, \u0027description\u0027]);",
+                                                                                    "});"
+                                                                                ]
+                                                                   }
+                                                    }
+                                                ],
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Accept",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "url":  {
+                                                                  "raw":  "{{base_url}}/news/{{news_id}}",
+                                                                  "host":  [
+                                                                               "{{base_url}}"
+                                                                           ],
+                                                                  "path":  [
+                                                                               "news",
+                                                                               "{{news_id}}"
+                                                                           ]
+                                                              }
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Noticias recomendadas",
+                                      "event":  [
+                                                    {
+                                                        "listen":  "test",
+                                                        "script":  {
+                                                                       "type":  "text/javascript",
+                                                                       "exec":  [
+                                                                                    "pm.test(\u0027Status 200\u0027, function () { pm.response.to.have.status(200); });",
+                                                                                    "pm.test(\u0027Devuelve 3 recomendadas\u0027, function () {",
+                                                                                    "  const json = pm.response.json();",
+                                                                                    "  pm.expect(json.data).to.be.an(\u0027array\u0027);",
+                                                                                    "  pm.expect(json.data.length).to.eql(3);",
+                                                                                    "});",
+                                                                                    "pm.test(\u0027Recomendadas no incluyen body completo\u0027, function () {",
+                                                                                    "  pm.expect(pm.response.json().data[0]).to.not.have.property(\u0027body\u0027);",
+                                                                                    "});"
+                                                                                ]
+                                                                   }
+                                                    }
+                                                ],
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Accept",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "url":  {
+                                                                  "raw":  "{{base_url}}/news/{{news_id}}/recommended",
+                                                                  "host":  [
+                                                                               "{{base_url}}"
+                                                                           ],
+                                                                  "path":  [
+                                                                               "news",
+                                                                               "{{news_id}}",
+                                                                               "recommended"
+                                                                           ]
+                                                              }
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Noticia inexistente",
+                                      "event":  [
+                                                    {
+                                                        "listen":  "test",
+                                                        "script":  {
+                                                                       "type":  "text/javascript",
+                                                                       "exec":  [
+                                                                                    "pm.test(\u0027Status 404\u0027, function () { pm.response.to.have.status(404); });",
+                                                                                    "pm.test(\u0027Mensaje correcto\u0027, function () {",
+                                                                                    "  pm.expect(pm.response.json().message).to.eql(\u0027Noticia no encontrada.\u0027);",
+                                                                                    "});"
+                                                                                ]
+                                                                   }
+                                                    }
+                                                ],
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Accept",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "url":  {
+                                                                  "raw":  "{{base_url}}/news/{{missing_news_id}}",
+                                                                  "host":  [
+                                                                               "{{base_url}}"
+                                                                           ],
+                                                                  "path":  [
+                                                                               "news",
+                                                                               "{{missing_news_id}}"
+                                                                           ]
+                                                              }
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Recomendadas de noticia inexistente",
+                                      "event":  [
+                                                    {
+                                                        "listen":  "test",
+                                                        "script":  {
+                                                                       "type":  "text/javascript",
+                                                                       "exec":  [
+                                                                                    "pm.test(\u0027Status 404\u0027, function () { pm.response.to.have.status(404); });",
+                                                                                    "pm.test(\u0027Mensaje correcto\u0027, function () {",
+                                                                                    "  pm.expect(pm.response.json().message).to.eql(\u0027Noticia no encontrada.\u0027);",
+                                                                                    "});"
+                                                                                ]
+                                                                   }
+                                                    }
+                                                ],
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Accept",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "url":  {
+                                                                  "raw":  "{{base_url}}/news/{{missing_news_id}}/recommended",
+                                                                  "host":  [
+                                                                               "{{base_url}}"
+                                                                           ],
+                                                                  "path":  [
+                                                                               "news",
+                                                                               "{{missing_news_id}}",
+                                                                               "recommended"
+                                                                           ]
+                                                              }
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Listar noticias filtradas por fecha desde",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  {
+                                                                  "raw":  "{{base_url}}/news?date_from=2026-07-01",
+                                                                  "host":  [
+                                                                               "{{base_url}}"
+                                                                           ],
+                                                                  "path":  [
+                                                                               "news"
+                                                                           ],
+                                                                  "query":  [
+                                                                                {
+                                                                                    "key":  "date_from",
+                                                                                    "value":  "2026-07-01"
+                                                                                }
+                                                                            ]
+                                                              }
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Listar noticias filtradas por fecha hasta",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  {
+                                                                  "raw":  "{{base_url}}/news?date_to=2026-07-31",
+                                                                  "host":  [
+                                                                               "{{base_url}}"
+                                                                           ],
+                                                                  "path":  [
+                                                                               "news"
+                                                                           ],
+                                                                  "query":  [
+                                                                                {
+                                                                                    "key":  "date_to",
+                                                                                    "value":  "2026-07-31"
+                                                                                }
+                                                                            ]
+                                                              }
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Listar noticias paginadas con busqueda",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  {
+                                                                  "raw":  "{{base_url}}/news?search=laravel|react\u0026page=1\u0026per_page=5",
+                                                                  "host":  [
+                                                                               "{{base_url}}"
+                                                                           ],
+                                                                  "path":  [
+                                                                               "news"
+                                                                           ],
+                                                                  "query":  [
+                                                                                {
+                                                                                    "key":  "search",
+                                                                                    "value":  "laravel|react"
+                                                                                },
+                                                                                {
+                                                                                    "key":  "page",
+                                                                                    "value":  "1"
+                                                                                },
+                                                                                {
+                                                                                    "key":  "per_page",
+                                                                                    "value":  "5"
+                                                                                }
+                                                                            ]
+                                                              }
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Crear noticia",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  {
+                                                                  "raw":  "{{base_url}}/news",
+                                                                  "host":  [
+                                                                               "{{base_url}}"
+                                                                           ],
+                                                                  "path":  [
+                                                                               "news"
+                                                                           ]
+                                                              },
+                                                      "body":  {
+                                                                   "mode":  "formdata",
+                                                                   "formdata":  [
+                                                                                    {
+                                                                                        "key":  "category_id",
+                                                                                        "value":  "1",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "title",
+                                                                                        "value":  "Nueva noticia Postman",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "image",
+                                                                                        "type":  "file",
+                                                                                        "src":  ""
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "excerpt",
+                                                                                        "value":  "Resumen de prueba.",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "body",
+                                                                                        "value":  "Contenido de prueba.",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "published_at",
+                                                                                        "value":  "2026-07-28T12:00:00Z",
+                                                                                        "type":  "text"
+                                                                                    }
+                                                                                ]
+                                                               }
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Actualizar noticia",
+                                      "request":  {
+                                                      "method":  "PUT",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  {
+                                                                  "raw":  "{{base_url}}/news/{{news_id}}",
+                                                                  "host":  [
+                                                                               "{{base_url}}"
+                                                                           ],
+                                                                  "path":  [
+                                                                               "news",
+                                                                               "{{news_id}}"
+                                                                           ]
+                                                              },
+                                                      "body":  {
+                                                                   "mode":  "raw",
+                                                                   "raw":  "{\n  \"title\": \"Noticia actualizada desde Postman\"\n}",
+                                                                   "options":  {
+                                                                                   "raw":  {
+                                                                                               "language":  "json"
+                                                                                           }
+                                                                               }
+                                                               }
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Eliminar noticia",
+                                      "request":  {
+                                                      "method":  "DELETE",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  {
+                                                                  "raw":  "{{base_url}}/news/{{news_id}}",
+                                                                  "host":  [
+                                                                               "{{base_url}}"
+                                                                           ],
+                                                                  "path":  [
+                                                                               "news",
+                                                                               "{{news_id}}"
+                                                                           ]
+                                                              }
+                                                  }
+                                  }
+                              ]
+                 },
+                 {
+                     "name":  "03 Categories",
+                     "item":  [
+                                  {
+                                      "name":  "Listar categorias",
+                                      "event":  [
+                                                    {
+                                                        "listen":  "test",
+                                                        "script":  {
+                                                                       "type":  "text/javascript",
+                                                                       "exec":  [
+                                                                                    "pm.test(\u0027Status 200\u0027, function () { pm.response.to.have.status(200); });",
+                                                                                    "pm.test(\u0027Devuelve 3 categorias\u0027, function () {",
+                                                                                    "  const json = pm.response.json();",
+                                                                                    "  pm.expect(json.data).to.be.an(\u0027array\u0027);",
+                                                                                    "  pm.expect(json.data.length).to.eql(3);",
+                                                                                    "});"
+                                                                                ]
+                                                                   }
+                                                    }
+                                                ],
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Accept",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "url":  {
+                                                                  "raw":  "{{base_url}}/categories",
+                                                                  "host":  [
+                                                                               "{{base_url}}"
+                                                                           ],
+                                                                  "path":  [
+                                                                               "categories"
+                                                                           ]
+                                                              }
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Noticias por categoria",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  {
+                                                                  "raw":  "{{base_url}}/categories/{{category_id}}/news",
+                                                                  "host":  [
+                                                                               "{{base_url}}"
+                                                                           ],
+                                                                  "path":  [
+                                                                               "categories",
+                                                                               "{{category_id}}",
+                                                                               "news"
+                                                                           ]
+                                                              }
+                                                  }
+                                  }
+                              ]
+                 },
+                 {
+                     "name":  "04 Security",
+                     "item":  [
+                                  {
+                                      "name":  "Sin token - noticias bloqueado",
+                                      "event":  [
+                                                    {
+                                                        "listen":  "test",
+                                                        "script":  {
+                                                                       "type":  "text/javascript",
+                                                                       "exec":  [
+                                                                                    "pm.test(\u0027Status 401\u0027, function () { pm.response.to.have.status(401); });",
+                                                                                    "pm.test(\u0027Token ausente\u0027, function () {",
+                                                                                    "  pm.expect(pm.response.json().message).to.eql(\u0027Token ausente o no autenticado.\u0027);",
+                                                                                    "});"
+                                                                                ]
+                                                                   }
+                                                    }
+                                                ],
+                                      "request":  {
+                                                      "auth":  {
+                                                                   "type":  "noauth"
+                                                               },
+                                                      "method":  "GET",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Accept",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "url":  {
+                                                                  "raw":  "{{base_url}}/news",
+                                                                  "host":  [
+                                                                               "{{base_url}}"
+                                                                           ],
+                                                                  "path":  [
+                                                                               "news"
+                                                                           ]
+                                                              }
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Sin token - categorias bloqueado",
+                                      "event":  [
+                                                    {
+                                                        "listen":  "test",
+                                                        "script":  {
+                                                                       "type":  "text/javascript",
+                                                                       "exec":  [
+                                                                                    "pm.test(\u0027Status 401\u0027, function () { pm.response.to.have.status(401); });",
+                                                                                    "pm.test(\u0027Token ausente\u0027, function () {",
+                                                                                    "  pm.expect(pm.response.json().message).to.eql(\u0027Token ausente o no autenticado.\u0027);",
+                                                                                    "});"
+                                                                                ]
+                                                                   }
+                                                    }
+                                                ],
+                                      "request":  {
+                                                      "auth":  {
+                                                                   "type":  "noauth"
+                                                               },
+                                                      "method":  "GET",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Accept",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "url":  {
+                                                                  "raw":  "{{base_url}}/categories",
+                                                                  "host":  [
+                                                                               "{{base_url}}"
+                                                                           ],
+                                                                  "path":  [
+                                                                               "categories"
+                                                                           ]
+                                                              }
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Token invalido - noticias bloqueado",
+                                      "event":  [
+                                                    {
+                                                        "listen":  "test",
+                                                        "script":  {
+                                                                       "type":  "text/javascript",
+                                                                       "exec":  [
+                                                                                    "pm.test(\u0027Status 401\u0027, function () { pm.response.to.have.status(401); });",
+                                                                                    "pm.test(\u0027Token invalido\u0027, function () {",
+                                                                                    "  pm.expect(pm.response.json().message).to.eql(\u0027Token invalido.\u0027);",
+                                                                                    "});"
+                                                                                ]
+                                                                   }
+                                                    }
+                                                ],
+                                      "request":  {
+                                                      "auth":  {
+                                                                   "type":  "bearer",
+                                                                   "bearer":  [
+                                                                                  {
+                                                                                      "key":  "token",
+                                                                                      "value":  "token-invalido",
+                                                                                      "type":  "string"
+                                                                                  }
+                                                                              ]
+                                                               },
+                                                      "method":  "GET",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Accept",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "url":  {
+                                                                  "raw":  "{{base_url}}/news",
+                                                                  "host":  [
+                                                                               "{{base_url}}"
+                                                                           ],
+                                                                  "path":  [
+                                                                               "news"
+                                                                           ]
+                                                              }
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Despues de logout - token viejo bloqueado",
+                                      "description":  "Ejecuta primero Login correcto, luego Logout, y finalmente este request.",
+                                      "event":  [
+                                                    {
+                                                        "listen":  "test",
+                                                        "script":  {
+                                                                       "type":  "text/javascript",
+                                                                       "exec":  [
+                                                                                    "pm.test(\u0027Status 401\u0027, function () { pm.response.to.have.status(401); });",
+                                                                                    "pm.test(\u0027Token queda invalidado despues de logout\u0027, function () {",
+                                                                                    "  pm.expect(pm.response.json().message).to.eql(\u0027Token invalido.\u0027);",
+                                                                                    "});"
+                                                                                ]
+                                                                   }
+                                                    }
+                                                ],
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Accept",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "url":  {
+                                                                  "raw":  "{{base_url}}/me",
+                                                                  "host":  [
+                                                                               "{{base_url}}"
+                                                                           ],
+                                                                  "path":  [
+                                                                               "me"
+                                                                           ]
+                                                              }
+                                                  }
+                                  }
+                              ]
+                 },
+                 {
+                     "name":  "05 Admin and Favorites",
+                     "item":  [
+                                  {
+                                      "name":  "Listar roles",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  {
+                                                                  "raw":  "{{base_url}}/roles",
+                                                                  "host":  [
+                                                                               "{{base_url}}"
+                                                                           ],
+                                                                  "path":  [
+                                                                               "roles"
+                                                                           ]
+                                                              }
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Listar usuarios",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  {
+                                                                  "raw":  "{{base_url}}/users",
+                                                                  "host":  [
+                                                                               "{{base_url}}"
+                                                                           ],
+                                                                  "path":  [
+                                                                               "users"
+                                                                           ]
+                                                              }
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Crear usuario",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  {
+                                                                  "raw":  "{{base_url}}/users",
+                                                                  "host":  [
+                                                                               "{{base_url}}"
+                                                                           ],
+                                                                  "path":  [
+                                                                               "users"
+                                                                           ]
+                                                              },
+                                                      "body":  {
+                                                                   "mode":  "raw",
+                                                                   "raw":  "{\n  \"name\": \"Usuario Postman\",\n  \"email\": \"postman@example.com\",\n  \"password\": \"password\",\n  \"role_id\": 4\n}",
+                                                                   "options":  {
+                                                                                   "raw":  {
+                                                                                               "language":  "json"
+                                                                                           }
+                                                                               }
+                                                               }
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Cambiar rol de usuario",
+                                      "request":  {
+                                                      "method":  "PUT",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  {
+                                                                  "raw":  "{{base_url}}/users/{{user_id}}/role",
+                                                                  "host":  [
+                                                                               "{{base_url}}"
+                                                                           ],
+                                                                  "path":  [
+                                                                               "users",
+                                                                               "{{user_id}}",
+                                                                               "role"
+                                                                           ]
+                                                              },
+                                                      "body":  {
+                                                                   "mode":  "raw",
+                                                                   "raw":  "{\n  \"role_id\": 3\n}",
+                                                                   "options":  {
+                                                                                   "raw":  {
+                                                                                               "language":  "json"
+                                                                                           }
+                                                                               }
+                                                               }
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Listar favoritos",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  {
+                                                                  "raw":  "{{base_url}}/favorites",
+                                                                  "host":  [
+                                                                               "{{base_url}}"
+                                                                           ],
+                                                                  "path":  [
+                                                                               "favorites"
+                                                                           ]
+                                                              }
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Marcar favorito",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  {
+                                                                  "raw":  "{{base_url}}/news/{{news_id}}/favorite",
+                                                                  "host":  [
+                                                                               "{{base_url}}"
+                                                                           ],
+                                                                  "path":  [
+                                                                               "news",
+                                                                               "{{news_id}}",
+                                                                               "favorite"
+                                                                           ]
+                                                              }
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Quitar favorito",
+                                      "request":  {
+                                                      "method":  "DELETE",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  {
+                                                                  "raw":  "{{base_url}}/news/{{news_id}}/favorite",
+                                                                  "host":  [
+                                                                               "{{base_url}}"
+                                                                           ],
+                                                                  "path":  [
+                                                                               "news",
+                                                                               "{{news_id}}",
+                                                                               "favorite"
+                                                                           ]
+                                                              }
+                                                  }
+                                  }
+                              ]
+                 }
+             ]
 }

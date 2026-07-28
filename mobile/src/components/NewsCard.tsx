@@ -1,3 +1,4 @@
+import { Ionicons } from '@expo/vector-icons';
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { useTheme } from '../theme/ThemeProvider';
@@ -8,9 +9,10 @@ type Props = {
   item: NewsListItem;
   onPress: (item: NewsListItem) => void;
   compact?: boolean;
+  onFavoritePress?: (item: NewsListItem) => void;
 };
 
-export function NewsCard({ item, onPress, compact = false }: Props) {
+export function NewsCard({ item, onPress, compact = false, onFavoritePress }: Props) {
   const { colors } = useTheme();
 
   return (
@@ -27,20 +29,53 @@ export function NewsCard({ item, onPress, compact = false }: Props) {
         },
       ]}
     >
-      <Image source={{ uri: item.image_url }} style={compact ? styles.compactImage : styles.image} />
-      <View style={styles.body}>
-        <View style={styles.metaRow}>
-          <Text style={[styles.category, { color: colors.primary }]}>{item.category.name}</Text>
-          <Text style={[styles.date, { color: colors.muted }]}>{formatDate(item.published_at)}</Text>
+      <Image
+        resizeMode="cover"
+        source={{ uri: item.image_url }}
+        style={compact ? styles.compactImage : styles.image}
+      />
+      <View style={[styles.body, compact ? styles.compactBody : null]}>
+        <View style={[styles.metaRow, compact ? styles.compactMetaRow : null]}>
+          <Text numberOfLines={1} style={[styles.category, { color: colors.primary }]}>
+            {item.category.name}
+          </Text>
         </View>
-        <Text numberOfLines={compact ? 2 : 3} style={[styles.title, { color: colors.text }]}>
-          {item.title}
-        </Text>
+        <View style={styles.titleRow}>
+          <Text
+            numberOfLines={compact ? 2 : 3}
+            style={[styles.title, compact ? styles.compactTitle : null, { color: colors.text }]}
+          >
+            {item.title}
+          </Text>
+          {onFavoritePress ? (
+            <Pressable
+              accessibilityLabel={item.is_favorite ? 'Quitar favorito' : 'Agregar favorito'}
+              accessibilityRole="button"
+              onPress={() => onFavoritePress(item)}
+              style={({ pressed }) => [
+                styles.favoriteButton,
+                {
+                  backgroundColor: colors.primarySoft,
+                  opacity: pressed ? 0.72 : 1,
+                },
+              ]}
+            >
+              <Ionicons
+                color={colors.primary}
+                name={item.is_favorite ? 'heart' : 'heart-outline'}
+                size={compact ? 18 : 20}
+              />
+            </Pressable>
+          ) : null}
+        </View>
         {!compact ? (
           <Text numberOfLines={3} style={[styles.excerpt, { color: colors.muted }]}>
             {item.excerpt}
           </Text>
         ) : null}
+        <Text numberOfLines={1} style={[styles.date, compact ? styles.compactDate : null, { color: colors.muted }]}>
+          Publicado: {formatDate(item.published_at)}
+        </Text>
       </View>
     </Pressable>
   );
@@ -52,24 +87,52 @@ const styles = StyleSheet.create({
     padding: 14,
   },
   card: {
+    alignSelf: 'stretch',
     borderRadius: 8,
     borderWidth: 1,
     marginBottom: 14,
     overflow: 'hidden',
+    width: '100%',
   },
   category: {
+    flex: 1,
+    flexShrink: 1,
     fontSize: 12,
     fontWeight: '800',
+    minWidth: 0,
     textTransform: 'uppercase',
   },
+  compactBody: {
+    flex: 1,
+    justifyContent: 'center',
+    minWidth: 0,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+  },
   compactCard: {
+    alignItems: 'stretch',
     flexDirection: 'row',
+    minHeight: 108,
+    width: '100%',
+  },
+  compactDate: {
+    fontSize: 11,
   },
   compactImage: {
-    height: 116,
-    width: 112,
+    height: 108,
+    width: 94,
+  },
+  compactMetaRow: {
+    gap: 6,
+  },
+  compactTitle: {
+    flexShrink: 1,
+    fontSize: 15,
+    lineHeight: 20,
+    minWidth: 0,
   },
   date: {
+    flexShrink: 0,
     fontSize: 12,
   },
   excerpt: {
@@ -85,10 +148,26 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 10,
     justifyContent: 'space-between',
+    minWidth: 0,
   },
   title: {
+    flexShrink: 1,
+    flex: 1,
     fontSize: 18,
     fontWeight: '800',
     lineHeight: 24,
+    minWidth: 0,
+  },
+  favoriteButton: {
+    alignItems: 'center',
+    borderRadius: 8,
+    height: 36,
+    justifyContent: 'center',
+    width: 36,
+  },
+  titleRow: {
+    alignItems: 'flex-start',
+    flexDirection: 'row',
+    gap: 10,
   },
 });

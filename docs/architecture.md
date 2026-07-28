@@ -21,9 +21,13 @@ PruebaTecnicaApp/
 ## Backend implementado
 
 - `AuthController`: login, logout y perfil autenticado.
-- `NewsController`: listado, detalle y recomendadas.
-- `CategoryController`: listado de categorias.
+- `NewsController`: listado filtrable/paginable, detalle, recomendadas y CRUD autorizado.
+- `CategoryController`: listado de categorias ordenadas por `news_count` y noticias por categoria.
+- `UserController` y `RoleController`: administracion protegida por rol.
+- `FavoriteController`: favoritos por usuario autenticado.
 - `Category` y `News` usan relacion uno a muchos.
+- `User` pertenece a `Role` mediante `users.role_id`.
+- `User` y `News` se relacionan por favoritos mediante `favorite_news`.
 - Las respuestas JSON mantienen el formato `{ data, message }` cuando la operacion es exitosa.
 
 ## Modelo de datos
@@ -48,6 +52,7 @@ categories
   id
   name
   description
+  news_count calculado con withCount
   timestamps
 
 news
@@ -59,6 +64,12 @@ news
   body
   published_at
   timestamps
+
+favorite_news
+  id
+  user_id
+  news_id
+  timestamps
 ```
 
 ## Setup de datos
@@ -69,7 +80,7 @@ La base se reconstruye con:
 php artisan migrate:fresh --seed
 ```
 
-El seeder crea el rol `superuser`, un usuario superusuario desde variables `.env`, 3 categorias y 8 noticias.
+El seeder crea los roles `superuser`, `administrator`, `news_editor` y `user`; un superusuario desde variables `.env`; usuarios demo para administrador/editor/usuario con password `password`; 3 categorias y 8 noticias.
 
 ## Docker
 

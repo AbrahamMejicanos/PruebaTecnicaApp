@@ -1,15 +1,19 @@
 import { Ionicons } from '@expo/vector-icons';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useCallback, useEffect, useState } from 'react';
-import { FlatList, RefreshControl, StyleSheet, Text, View } from 'react-native';
+import { FlatList, Pressable, RefreshControl, StyleSheet, Text, View } from 'react-native';
 
 import { fetchCategories } from '../api/categories.service';
 import { getApiErrorMessage } from '../api/client';
 import { ErrorState } from '../components/ErrorState';
 import { LoadingState } from '../components/LoadingState';
+import type { CategoriesStackParamList } from '../navigation/types';
 import { useTheme } from '../theme/ThemeProvider';
 import type { Category } from '../types/category';
 
-export function CategoriesScreen() {
+type Props = NativeStackScreenProps<CategoriesStackParamList, 'CategoriesList'>;
+
+export function CategoriesScreen({ navigation }: Props) {
   const { colors } = useTheme();
   const [categories, setCategories] = useState<Category[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -60,17 +64,31 @@ export function CategoriesScreen() {
           onRefresh={() => void loadCategories(true)}
         />
       }
-      renderItem={({ item }) => (
-        <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+      renderItem={({ index, item }) => (
+        <Pressable
+          accessibilityRole="button"
+          onPress={() => navigation.navigate('CategoryNews', { id: item.id })}
+          style={({ pressed }) => [
+            styles.card,
+            {
+              backgroundColor: colors.surface,
+              borderColor: colors.border,
+              opacity: pressed ? 0.78 : 1,
+            },
+          ]}
+        >
           <View style={[styles.iconBox, { backgroundColor: colors.primarySoft }]}>
-            <Ionicons color={colors.primary} name="albums" size={22} />
+            <Text style={[styles.rank, { color: colors.primary }]}>{index + 1}</Text>
           </View>
           <View style={styles.cardText}>
             <Text style={[styles.name, { color: colors.text }]}>{item.name}</Text>
             <Text style={[styles.description, { color: colors.muted }]}>{item.description ?? 'Sin descripcion'}</Text>
+            <Text style={[styles.count, { color: colors.primary }]}>
+              {item.news_count} {item.news_count === 1 ? 'noticia' : 'noticias'}
+            </Text>
           </View>
-          <Text style={[styles.id, { color: colors.primary }]}>#{item.id}</Text>
-        </View>
+          <Ionicons color={colors.muted} name="chevron-forward" size={20} />
+        </Pressable>
       )}
     />
   );
@@ -99,6 +117,10 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 20,
   },
+  count: {
+    fontSize: 13,
+    fontWeight: '900',
+  },
   header: {
     gap: 8,
     marginBottom: 16,
@@ -115,8 +137,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     width: 48,
   },
-  id: {
-    fontSize: 13,
+  rank: {
+    fontSize: 18,
     fontWeight: '900',
   },
   kicker: {

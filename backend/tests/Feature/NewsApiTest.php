@@ -34,6 +34,8 @@ class NewsApiTest extends TestCase
                     ],
                 ],
             ]);
+
+        $this->assertStringContainsString('/images/news/', $response->json('data.0.image_url'));
     }
 
     public function test_authenticated_user_can_show_news_detail(): void
@@ -60,6 +62,8 @@ class NewsApiTest extends TestCase
                     'category' => ['id', 'name', 'description'],
                 ],
             ]);
+
+        $this->assertStringContainsString('/images/news/', $response->json('data.image_url'));
     }
 
     public function test_news_detail_returns_not_found_for_missing_news(): void
@@ -91,6 +95,39 @@ class NewsApiTest extends TestCase
             ->assertJsonPath('message', 'OK')
             ->assertJsonCount(3, 'data')
             ->assertJsonMissingPath('data.0.body');
+    }
+
+    public function test_news_can_be_filtered_with_only_date_from(): void
+    {
+        $headers = $this->seedAndGetAuthHeaders();
+
+        $this
+            ->withHeaders($headers)
+            ->getJson('/api/news?date_from='.now()->subDay()->toDateString())
+            ->assertOk()
+            ->assertJsonCount(4, 'data');
+    }
+
+    public function test_news_can_be_filtered_with_only_date_to(): void
+    {
+        $headers = $this->seedAndGetAuthHeaders();
+
+        $this
+            ->withHeaders($headers)
+            ->getJson('/api/news?date_to='.now()->subDays(3)->toDateString())
+            ->assertOk()
+            ->assertJsonCount(3, 'data');
+    }
+
+    public function test_news_can_be_filtered_with_date_range(): void
+    {
+        $headers = $this->seedAndGetAuthHeaders();
+
+        $this
+            ->withHeaders($headers)
+            ->getJson('/api/news?date_from='.now()->subDays(2)->toDateString().'&date_to='.now()->subDay()->toDateString())
+            ->assertOk()
+            ->assertJsonCount(2, 'data');
     }
 
     public function test_recommended_news_returns_not_found_for_missing_news(): void

@@ -8,6 +8,8 @@ jest.mock('expo-secure-store', () => ({
   deleteItemAsync: jest.fn(async () => undefined),
 }));
 
+jest.mock('@react-native-community/datetimepicker', () => 'DateTimePicker');
+
 jest.mock('react-native-safe-area-context', () => {
   const React = require('react');
   const { View } = require('react-native');
@@ -31,7 +33,7 @@ describe('App', () => {
   it('renders the login screen when there is no stored token', async () => {
     const { findByText } = await render(<App />);
 
-    expect(await findByText('News Agentic')).toBeTruthy();
+    expect(await findByText('Prueba Abraham Mejicanos')).toBeTruthy();
     expect(await findByText('Iniciar sesion')).toBeTruthy();
   });
 });

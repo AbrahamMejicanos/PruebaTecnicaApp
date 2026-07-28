@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 #[Fillable(['category_id', 'title', 'image_url', 'excerpt', 'body', 'published_at'])]
 class News extends Model
@@ -22,5 +23,11 @@ class News extends Model
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
+    }
+
+    /** @return BelongsToMany<User, $this> */
+    public function favoriteUsers(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'favorite_news')->withTimestamps();
     }
 }
