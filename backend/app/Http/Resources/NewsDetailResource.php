@@ -22,6 +22,7 @@ class NewsDetailResource extends JsonResource
             'body' => $this->body,
             'published_at' => $this->published_at?->toISOString(),
             'category' => new CategoryResource($this->whenLoaded('category')),
+            'is_favorite' => $this->isFavoriteForCurrentUser(),
         ];
     }
 
@@ -32,5 +33,16 @@ class NewsDetailResource extends JsonResource
         }
 
         return $request->getSchemeAndHttpHost().'/'.ltrim($this->image_url, '/');
+    }
+
+    private function isFavoriteForCurrentUser(): bool
+    {
+        $userId = auth('api')->id();
+
+        if (! $userId) {
+            return false;
+        }
+
+        return $this->favoriteUsers()->whereKey($userId)->exists();
     }
 }

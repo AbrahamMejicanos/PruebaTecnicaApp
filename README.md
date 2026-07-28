@@ -26,6 +26,14 @@ La prueba original mencionaba una aplicacion web, pero el criterio vigente es en
 - Autenticacion JWT configurada con `php-open-source-saver/jwt-auth`.
 - Modelos, migraciones y seeders para usuarios, categorias y noticias.
 - Endpoints protegidos para noticias, recomendadas y categorias.
+- RBAC con roles `superuser`, `administrator`, `news_editor` y `user`.
+- Endpoints administrativos de usuarios/roles protegidos por rol.
+- CRUD autorizado de noticias para superusuario, administrador y editor.
+- Favoritos por usuario autenticado.
+- Filtros de noticias por busqueda, fecha y paginacion.
+- Categorias ordenadas por cantidad de noticias y navegacion a noticias de cada categoria.
+- App movil con date picker para filtros de fecha y tabs administrativos segun rol.
+- Creacion/edicion de noticias con subida de imagen desde el dispositivo.
 - Expo React Native con TypeScript instalado en `mobile/`.
 - Dependencias moviles base instaladas: React Navigation, Axios y Expo Secure Store.
 - Dependencias de pruebas moviles instaladas: Jest Expo y React Native Testing Library.
@@ -151,4 +159,12 @@ docker compose --env-file .env.docker up postgres
 
 El acceso se crea desde las variables `SUPERUSER_NAME`, `SUPERUSER_EMAIL` y `SUPERUSER_PASSWORD` en `backend/.env`. No hay credenciales de login quemadas en el codigo.
 
-El backend ya cuenta con implementacion funcional. La siguiente fase natural es conectar el frontend movil a estos endpoints.
+El backend y el frontend movil ya cuentan con un MVP funcional conectado. La siguiente fase natural es pulir experiencia administrativa o ampliar pruebas visuales/end-to-end.
+
+Usuarios demo adicionales creados por seeder:
+
+```text
+admin@example.com / password
+editor@example.com / password
+user@example.com / password
+```

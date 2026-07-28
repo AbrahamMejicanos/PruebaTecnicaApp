@@ -4,26 +4,26 @@ import { KeyboardAvoidingView, Platform, Pressable, StyleSheet, Text, TextInput,
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { getApiErrorMessage } from '../api/client';
+import { useAppAlert } from '../hooks/useAppAlert';
 import { useAuth } from '../hooks/useAuth';
 import { useTheme } from '../theme/ThemeProvider';
 
 export function LoginScreen() {
   const { colors, mode, toggleTheme } = useTheme();
+  const { showError } = useAppAlert();
   const { clearSessionMessage, login, sessionMessage } = useAuth();
-  const [email, setEmail] = useState('amejicanos@example.com');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   async function handleLogin() {
     setIsSubmitting(true);
-    setError(null);
     clearSessionMessage();
 
     try {
       await login(email.trim(), password);
     } catch (requestError) {
-      setError(getApiErrorMessage(requestError));
+      showError(getApiErrorMessage(requestError), 'No pudimos iniciar sesion');
     } finally {
       setIsSubmitting(false);
     }
@@ -53,7 +53,7 @@ export function LoginScreen() {
             autoComplete="email"
             keyboardType="email-address"
             onChangeText={setEmail}
-            placeholder="tu-correo@example.com"
+            placeholder="Correo electronico"
             placeholderTextColor={colors.muted}
             style={[styles.input, { borderColor: colors.border, color: colors.text }]}
             value={email}
@@ -70,7 +70,6 @@ export function LoginScreen() {
           />
 
           {sessionMessage ? <Text style={[styles.feedback, { color: colors.primary }]}>{sessionMessage}</Text> : null}
-          {error ? <Text style={[styles.feedback, { color: colors.danger }]}>{error}</Text> : null}
 
           <Pressable
             accessibilityRole="button"

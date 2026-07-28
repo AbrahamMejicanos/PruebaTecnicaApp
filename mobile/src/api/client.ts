@@ -43,6 +43,26 @@ export function setUnauthorizedHandler(handler: (() => void) | null): void {
 
 export function getApiErrorMessage(error: unknown): string {
   if (axios.isAxiosError<ApiErrorBody>(error)) {
+    if (!error.response) {
+      return 'No pudimos conectar con el servidor. Revisa tu conexion e intenta de nuevo.';
+    }
+
+    if (error.response.status === 422) {
+      return 'Revisa los datos ingresados e intenta de nuevo.';
+    }
+
+    if (error.response.status === 403) {
+      return 'No tienes permiso para realizar esta accion.';
+    }
+
+    if (error.response.status === 404) {
+      return 'No encontramos la informacion solicitada.';
+    }
+
+    if (error.response.status >= 500) {
+      return 'Tuvimos un problema interno. Intenta de nuevo en unos minutos.';
+    }
+
     return error.response?.data?.message ?? 'No se pudo completar la solicitud.';
   }
 

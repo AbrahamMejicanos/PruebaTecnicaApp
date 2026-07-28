@@ -214,7 +214,9 @@ php artisan migrate:fresh --seed
 El seeder crea:
 
 - Rol `superuser`
+- Roles `administrator`, `news_editor` y `user`
 - Usuario superusuario usando `SUPERUSER_NAME`, `SUPERUSER_EMAIL` y `SUPERUSER_PASSWORD`
+- Usuarios demo `admin@example.com`, `editor@example.com` y `user@example.com` con password `password`
 - 3 categorias
 - 8 noticias con imagenes locales servidas desde `backend/public/images/news`
 
@@ -241,8 +243,18 @@ Por seguridad, cada usuario tiene una unica sesion JWT activa. Si el mismo usuar
 | GET | `/api/me` | Si | Retorna usuario autenticado. |
 | GET | `/api/news` | Si | Lista noticias. |
 | GET | `/api/news/{id}` | Si | Detalle completo de noticia. |
+| POST | `/api/news` | Si, editor/admin/superuser | Crea noticia con imagen multipart. |
+| PUT | `/api/news/{id}` | Si, editor/admin/superuser | Actualiza noticia. |
+| POST | `/api/news/{id}` | Si, editor/admin/superuser | Actualiza noticia con imagen multipart. |
+| DELETE | `/api/news/{id}` | Si, editor/admin/superuser | Elimina noticia. |
 | GET | `/api/news/{id}/recommended` | Si | Retorna 3 recomendadas. |
-| GET | `/api/categories` | Si | Lista categorias. |
+| GET | `/api/categories` | Si | Lista categorias ordenadas por cantidad de noticias. |
+| GET | `/api/categories/{id}/news` | Si | Lista noticias de una categoria. |
+| GET | `/api/favorites` | Si | Lista favoritos propios. |
+| GET | `/api/users` | Si, admin/superuser | Lista usuarios. |
+| GET | `/api/roles` | Si, admin/superuser | Lista roles. |
+
+Las imagenes de noticias se suben como archivo `image` en `multipart/form-data` y quedan disponibles desde `public/uploads/news`.
 
 ## Pruebas
 
@@ -253,5 +265,5 @@ php artisan test
 Estado actual esperado:
 
 ```text
-17 tests passed
+30 tests passed
 ```

@@ -7,6 +7,7 @@ export type NewsListItem = {
   excerpt: string;
   published_at: string;
   category: Category;
+  is_favorite: boolean;
 };
 
 export type NewsDetail = NewsListItem & {

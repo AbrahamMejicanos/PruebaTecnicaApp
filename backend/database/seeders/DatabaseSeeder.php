@@ -28,20 +28,71 @@ class DatabaseSeeder extends Seeder
             throw new RuntimeException('Configura SUPERUSER_EMAIL y SUPERUSER_PASSWORD en backend/.env antes de ejecutar seeders.');
         }
 
-        $superuserRole = Role::query()->updateOrCreate([
-            'slug' => 'superuser',
-        ], [
-            'name' => 'Superusuario',
-            'description' => 'Acceso principal para administrar y validar la aplicacion.',
-        ]);
+        $roles = collect([
+            [
+                'slug' => 'superuser',
+                'name' => 'Superusuario',
+                'description' => 'Acceso total a usuarios, roles, noticias y funciones administrativas.',
+            ],
+            [
+                'slug' => 'administrator',
+                'name' => 'Administrador',
+                'description' => 'Administra usuarios y noticias, sin modificar superusuarios.',
+            ],
+            [
+                'slug' => 'news_editor',
+                'name' => 'Editor de noticias',
+                'description' => 'Crea, modifica y elimina noticias sin administrar usuarios.',
+            ],
+            [
+                'slug' => 'user',
+                'name' => 'Usuario',
+                'description' => 'Navega noticias, categorias, recomendadas y favoritos.',
+            ],
+        ])->mapWithKeys(function (array $role): array {
+            $model = Role::query()->updateOrCreate([
+                'slug' => $role['slug'],
+            ], [
+                'name' => $role['name'],
+                'description' => $role['description'],
+            ]);
+
+            return [$model->slug => $model];
+        });
 
         User::query()->updateOrCreate([
             'email' => $superuserEmail,
         ], [
-            'role_id' => $superuserRole->id,
+            'role_id' => $roles['superuser']->id,
             'name' => $superuserName,
             'password' => $superuserPassword,
         ]);
+
+        foreach ([
+            [
+                'role' => 'administrator',
+                'name' => 'Admin Demo',
+                'email' => 'admin@example.com',
+            ],
+            [
+                'role' => 'news_editor',
+                'name' => 'Editor Demo',
+                'email' => 'editor@example.com',
+            ],
+            [
+                'role' => 'user',
+                'name' => 'Usuario Demo',
+                'email' => 'user@example.com',
+            ],
+        ] as $demoUser) {
+            User::query()->updateOrCreate([
+                'email' => $demoUser['email'],
+            ], [
+                'role_id' => $roles[$demoUser['role']]->id,
+                'name' => $demoUser['name'],
+                'password' => 'password',
+            ]);
+        }
 
         $categories = collect([
             [

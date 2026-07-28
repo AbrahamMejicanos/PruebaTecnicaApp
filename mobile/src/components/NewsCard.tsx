@@ -1,3 +1,4 @@
+import { Ionicons } from '@expo/vector-icons';
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { useTheme } from '../theme/ThemeProvider';
@@ -8,9 +9,10 @@ type Props = {
   item: NewsListItem;
   onPress: (item: NewsListItem) => void;
   compact?: boolean;
+  onFavoritePress?: (item: NewsListItem) => void;
 };
 
-export function NewsCard({ item, onPress, compact = false }: Props) {
+export function NewsCard({ item, onPress, compact = false, onFavoritePress }: Props) {
   const { colors } = useTheme();
 
   return (
@@ -37,21 +39,43 @@ export function NewsCard({ item, onPress, compact = false }: Props) {
           <Text numberOfLines={1} style={[styles.category, { color: colors.primary }]}>
             {item.category.name}
           </Text>
-          <Text numberOfLines={1} style={[styles.date, compact ? styles.compactDate : null, { color: colors.muted }]}>
-            {formatDate(item.published_at)}
-          </Text>
         </View>
-        <Text
-          numberOfLines={compact ? 2 : 3}
-          style={[styles.title, compact ? styles.compactTitle : null, { color: colors.text }]}
-        >
-          {item.title}
-        </Text>
+        <View style={styles.titleRow}>
+          <Text
+            numberOfLines={compact ? 2 : 3}
+            style={[styles.title, compact ? styles.compactTitle : null, { color: colors.text }]}
+          >
+            {item.title}
+          </Text>
+          {onFavoritePress ? (
+            <Pressable
+              accessibilityLabel={item.is_favorite ? 'Quitar favorito' : 'Agregar favorito'}
+              accessibilityRole="button"
+              onPress={() => onFavoritePress(item)}
+              style={({ pressed }) => [
+                styles.favoriteButton,
+                {
+                  backgroundColor: colors.primarySoft,
+                  opacity: pressed ? 0.72 : 1,
+                },
+              ]}
+            >
+              <Ionicons
+                color={colors.primary}
+                name={item.is_favorite ? 'heart' : 'heart-outline'}
+                size={compact ? 18 : 20}
+              />
+            </Pressable>
+          ) : null}
+        </View>
         {!compact ? (
           <Text numberOfLines={3} style={[styles.excerpt, { color: colors.muted }]}>
             {item.excerpt}
           </Text>
         ) : null}
+        <Text numberOfLines={1} style={[styles.date, compact ? styles.compactDate : null, { color: colors.muted }]}>
+          Publicado: {formatDate(item.published_at)}
+        </Text>
       </View>
     </Pressable>
   );
@@ -92,7 +116,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   compactDate: {
-    maxWidth: 86,
+    fontSize: 11,
   },
   compactImage: {
     height: 108,
@@ -128,9 +152,22 @@ const styles = StyleSheet.create({
   },
   title: {
     flexShrink: 1,
+    flex: 1,
     fontSize: 18,
     fontWeight: '800',
     lineHeight: 24,
     minWidth: 0,
+  },
+  favoriteButton: {
+    alignItems: 'center',
+    borderRadius: 8,
+    height: 36,
+    justifyContent: 'center',
+    width: 36,
+  },
+  titleRow: {
+    alignItems: 'flex-start',
+    flexDirection: 'row',
+    gap: 10,
   },
 });

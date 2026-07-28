@@ -1,4 +1,5 @@
-import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import type { RouteProp } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useCallback, useEffect, useState } from 'react';
 import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
 
@@ -7,12 +8,17 @@ import { fetchNewsDetail, fetchRecommendedNews } from '../api/news.service';
 import { ErrorState } from '../components/ErrorState';
 import { LoadingState } from '../components/LoadingState';
 import { NewsCard } from '../components/NewsCard';
-import type { HomeStackParamList } from '../navigation/types';
+import type { CategoriesStackParamList, FavoritesStackParamList, HomeStackParamList } from '../navigation/types';
 import { useTheme } from '../theme/ThemeProvider';
 import type { NewsDetail, NewsListItem } from '../types/news';
 import { formatDate } from '../utils/date';
 
-type Props = NativeStackScreenProps<HomeStackParamList, 'NewsDetail'>;
+type DetailParamList = HomeStackParamList & FavoritesStackParamList & CategoriesStackParamList;
+
+type Props = {
+  navigation: NativeStackNavigationProp<DetailParamList>;
+  route: RouteProp<DetailParamList, 'NewsDetail' | 'FavoriteNewsDetail' | 'CategoryNewsDetail'>;
+};
 
 export function NewsDetailScreen({ navigation, route }: Props) {
   const { colors } = useTheme();
@@ -20,6 +26,8 @@ export function NewsDetailScreen({ navigation, route }: Props) {
   const [recommended, setRecommended] = useState<NewsListItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const detailRouteName =
+    route.name === 'FavoriteNewsDetail' ? 'FavoriteNewsDetail' : route.name === 'CategoryNewsDetail' ? 'CategoryNewsDetail' : 'NewsDetail';
 
   const loadDetail = useCallback(async () => {
     setIsLoading(true);
@@ -71,7 +79,7 @@ export function NewsDetailScreen({ navigation, route }: Props) {
             compact
             item={item}
             key={item.id}
-            onPress={(selected) => navigation.push('NewsDetail', { id: selected.id })}
+            onPress={(selected) => navigation.push(detailRouteName, { id: selected.id })}
           />
         ))}
       </View>

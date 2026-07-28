@@ -1,15 +1,22 @@
 import { Ionicons } from '@expo/vector-icons';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { useAuth } from '../hooks/useAuth';
 import { useTheme } from '../theme/ThemeProvider';
 
 export function HeaderActions() {
   const { colors, mode, toggleTheme } = useTheme();
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
 
   return (
     <View style={styles.row}>
+      {user?.role ? (
+        <View style={[styles.roleBadge, { backgroundColor: colors.primarySoft }]}>
+          <Text numberOfLines={1} style={[styles.roleText, { color: colors.primary }]}>
+            {user.role.slug === 'superuser' ? 'Super' : user.role.name}
+          </Text>
+        </View>
+      ) : null}
       <Pressable
         accessibilityLabel="Cambiar tema"
         accessibilityRole="button"
@@ -38,7 +45,21 @@ const styles = StyleSheet.create({
     width: 40,
   },
   row: {
+    alignItems: 'center',
     flexDirection: 'row',
+    gap: 2,
     marginRight: 4,
+  },
+  roleBadge: {
+    alignItems: 'center',
+    borderRadius: 8,
+    justifyContent: 'center',
+    maxWidth: 96,
+    minHeight: 30,
+    paddingHorizontal: 8,
+  },
+  roleText: {
+    fontSize: 11,
+    fontWeight: '900',
   },
 });

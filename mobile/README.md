@@ -10,6 +10,8 @@ App Android de noticias construida con React Native y Expo.
 - React Navigation
 - Axios
 - Expo Secure Store
+- React Native DateTimePicker
+- Expo Image Picker
 - Jest Expo
 - React Native Testing Library
 
@@ -77,6 +79,17 @@ npm run android
 ```
 
 Si el backend se corre con Docker, mantener igualmente el puerto `8000` expuesto en la maquina host para que el emulador pueda llegar con `http://10.0.2.2:8000/api`.
+
+## Vistas por rol
+
+- Usuario: Inicio, Favoritos y Categorias.
+- Editor: agrega Gestion de noticias.
+- Administrador: agrega Gestion de noticias y Gestion de usuarios.
+- Superusuario: acceso completo, incluyendo gestion de superusuarios.
+
+Inicio usa selector visual para filtros `Desde` y `Hasta`; ambos filtros pueden aplicarse juntos o por separado. Categorias muestra ranking por cantidad de noticias y permite abrir las noticias de cada categoria.
+
+La gestion de noticias permite seleccionar una imagen desde el dispositivo. La app la envia al backend como archivo, sin pedir URL manual al usuario.
 
 ## Pruebas
 

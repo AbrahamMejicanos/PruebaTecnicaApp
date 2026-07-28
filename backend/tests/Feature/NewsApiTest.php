@@ -97,6 +97,39 @@ class NewsApiTest extends TestCase
             ->assertJsonMissingPath('data.0.body');
     }
 
+    public function test_news_can_be_filtered_with_only_date_from(): void
+    {
+        $headers = $this->seedAndGetAuthHeaders();
+
+        $this
+            ->withHeaders($headers)
+            ->getJson('/api/news?date_from='.now()->subDay()->toDateString())
+            ->assertOk()
+            ->assertJsonCount(4, 'data');
+    }
+
+    public function test_news_can_be_filtered_with_only_date_to(): void
+    {
+        $headers = $this->seedAndGetAuthHeaders();
+
+        $this
+            ->withHeaders($headers)
+            ->getJson('/api/news?date_to='.now()->subDays(3)->toDateString())
+            ->assertOk()
+            ->assertJsonCount(3, 'data');
+    }
+
+    public function test_news_can_be_filtered_with_date_range(): void
+    {
+        $headers = $this->seedAndGetAuthHeaders();
+
+        $this
+            ->withHeaders($headers)
+            ->getJson('/api/news?date_from='.now()->subDays(2)->toDateString().'&date_to='.now()->subDay()->toDateString())
+            ->assertOk()
+            ->assertJsonCount(2, 'data');
+    }
+
     public function test_recommended_news_returns_not_found_for_missing_news(): void
     {
         $headers = $this->seedAndGetAuthHeaders();
