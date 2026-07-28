@@ -1,14 +1,46 @@
 services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: news_agentic_backend
+    restart: unless-stopped
+    environment:
+      APP_NAME: NewsAgenticApp
+      APP_ENV: local
+      APP_DEBUG: "true"
+      APP_URL: http://localhost:8000
+      DB_CONNECTION: pgsql
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_DATABASE: ${POSTGRES_DB:-news_agentic}
+      DB_USERNAME: ${POSTGRES_USER:-postgres}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      JWT_TTL: 60
+      SUPERUSER_NAME: ${SUPERUSER_NAME:-Super Usuario}
+      SUPERUSER_EMAIL: ${SUPERUSER_EMAIL:?Set SUPERUSER_EMAIL in .env.docker}
+      SUPERUSER_PASSWORD: ${SUPERUSER_PASSWORD:?Set SUPERUSER_PASSWORD in .env.docker}
+      RUN_MIGRATIONS: ${RUN_MIGRATIONS:-true}
+      RUN_SEEDERS: ${RUN_SEEDERS:-true}
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/var/www/html
+      - backend_vendor:/var/www/html/vendor
+    depends_on:
+      postgres:
+        condition: service_healthy
+
   postgres:
     image: postgres:16-alpine
     container_name: news_agentic_postgres
     restart: unless-stopped
     environment:
-      POSTGRES_DB: news_agentic
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ${POSTGRES_DB:-news_agentic}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
     ports:
-      - "5432:5432"
+      - "${POSTGRES_PORT:-5432}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -19,3 +51,4 @@ services:
 
 volumes:
   postgres_data:
+  backend_vendor:

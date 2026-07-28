@@ -11,3 +11,164 @@ Base esperada: `/api`
 | GET | `/news/{id}` | Si | Detalle de noticia. |
 | GET | `/news/{id}/recommended` | Si | Noticias recomendadas. |
 | GET | `/categories` | Si | Lista categorias. |
+
+## Autenticacion
+
+### POST `/api/login`
+
+Body:
+
+```json
+{
+  "email": "tu-correo@example.com",
+  "password": "tu-password-seguro"
+}
+```
+
+Nota de seguridad: cada usuario solo mantiene un token activo. Si el mismo usuario inicia sesion otra vez, el token anterior queda reemplazado y los endpoints protegidos responderan `401`.
+
+Respuesta:
+
+```json
+{
+  "data": {
+    "token": "jwt-token",
+    "token_type": "bearer",
+    "expires_in": 3600,
+    "user": {
+      "id": 1,
+      "name": "Tu Nombre",
+      "email": "tu-correo@example.com",
+      "role": {
+        "id": 1,
+        "name": "Superusuario",
+        "slug": "superuser"
+      }
+    }
+  },
+  "message": "OK"
+}
+```
+
+### Header protegido
+
+```http
+Authorization: Bearer <token>
+```
+
+### POST `/api/logout`
+
+No requiere body. El token enviado en `Authorization` identifica la sesion a cerrar.
+
+Respuesta:
+
+```json
+{
+  "data": {
+    "user": {
+      "id": 1,
+      "name": "Tu Nombre",
+      "email": "tu-correo@example.com",
+      "role": {
+        "id": 1,
+        "name": "Superusuario",
+        "slug": "superuser"
+      }
+    }
+  },
+  "message": "Sesion cerrada."
+}
+```
+
+## Noticias
+
+### GET `/api/news`
+
+Retorna lista de noticias con datos resumidos:
+
+```json
+{
+  "data": [
+    {
+      "id": 1,
+      "title": "Titulo",
+      "image_url": "https://placehold.co/...",
+      "excerpt": "Resumen",
+      "published_at": "2026-07-28T06:00:00.000000Z",
+      "category": {
+        "id": 1,
+        "name": "Tecnologia",
+        "description": "..."
+      }
+    }
+  ],
+  "message": "OK"
+}
+```
+
+### GET `/api/news/{id}`
+
+Incluye `body` completo.
+
+### GET `/api/news/{id}/recommended`
+
+Retorna 3 noticias recomendadas. Primero busca por misma categoria y completa con noticias recientes si faltan resultados.
+
+## Categorias
+
+### GET `/api/categories`
+
+```json
+{
+  "data": [
+    {
+      "id": 1,
+      "name": "Tecnologia",
+      "description": "Noticias sobre software, inteligencia artificial y productos digitales."
+    }
+  ],
+  "message": "OK"
+}
+```
+
+## Errores principales
+
+Credenciales invalidas:
+
+```json
+{
+  "message": "Credenciales invalidas."
+}
+```
+
+Noticia inexistente:
+
+```json
+{
+  "message": "Noticia no encontrada."
+}
+```
+
+Token ausente:
+
+```json
+{
+  "message": "Token ausente o no autenticado."
+}
+```
+
+Token invalido:
+
+```json
+{
+  "message": "Token invalido."
+}
+```
+
+Sesion reemplazada por un nuevo login:
+
+```json
+{
+  "message": "Sesion reemplazada por un nuevo inicio de sesion."
+}
+```
