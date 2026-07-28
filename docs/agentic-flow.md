@@ -27,6 +27,8 @@
 - Seeder reproducible con usuario demo, 3 categorias y 8 noticias.
 - Endpoints implementados: login, logout, me, news, news detail, recommended y categories.
 - Feature tests cubren autenticacion, rutas protegidas, noticias, recomendadas y categorias.
+- Se agrego `UserResource` para respuestas limpias de usuario.
+- Se personalizaron mensajes para token ausente, invalido y expirado.
 
 ## Frontend Mobile
 
@@ -35,7 +37,7 @@
 
 ## QA
 
-- Backend validado con `php artisan test`: 11 pruebas pasan.
+- Backend validado con `php artisan test`: 14 pruebas pasan.
 - Frontend mantiene smoke test inicial de Expo.
 
 ## Documentador

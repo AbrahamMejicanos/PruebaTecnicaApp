@@ -29,7 +29,20 @@ class AuthApiTest extends TestCase
                     'expires_in',
                     'user' => ['id', 'name', 'email'],
                 ],
-            ]);
+            ])
+            ->assertJsonMissingPath('data.user.created_at')
+            ->assertJsonMissingPath('data.user.updated_at');
+    }
+
+    public function test_login_requires_valid_payload(): void
+    {
+        $response = $this->postJson('/api/login', [
+            'email' => 'not-an-email',
+        ]);
+
+        $response
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors(['email', 'password']);
     }
 
     public function test_user_cannot_login_with_invalid_credentials(): void
@@ -57,13 +70,28 @@ class AuthApiTest extends TestCase
 
         $response
             ->assertOk()
-            ->assertJsonPath('data.email', 'demo@example.com');
+            ->assertJsonPath('data.email', 'demo@example.com')
+            ->assertJsonMissingPath('data.created_at')
+            ->assertJsonMissingPath('data.updated_at');
     }
 
     public function test_protected_routes_reject_requests_without_token(): void
     {
         $response = $this->getJson('/api/news');
 
-        $response->assertUnauthorized();
+        $response
+            ->assertUnauthorized()
+            ->assertJsonPath('message', 'Token ausente o no autenticado.');
+    }
+
+    public function test_protected_routes_reject_invalid_token(): void
+    {
+        $response = $this
+            ->withHeader('Authorization', 'Bearer invalid-token')
+            ->getJson('/api/news');
+
+        $response
+            ->assertUnauthorized()
+            ->assertJsonPath('message', 'Token invalido.');
     }
 }

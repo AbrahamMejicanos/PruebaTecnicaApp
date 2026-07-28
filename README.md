@@ -33,7 +33,13 @@ La prueba original mencionaba una aplicacion web, pero el criterio vigente es en
 
 ## Comandos utiles
 
-Backend:
+Backend, primera instalacion desde la raiz del repo:
+
+```powershell
+.\scripts\setup-backend.ps1
+```
+
+Backend, primera instalacion manual desde `backend/`:
 
 ```bash
 cd backend
@@ -44,6 +50,22 @@ php artisan jwt:secret
 php artisan migrate:fresh --seed
 php artisan serve
 php artisan test
+```
+
+Backend, entorno local ya configurado:
+
+```powershell
+cd C:\Users\ameji\OneDrive\Desktop\PruebaApp\PruebaTecnicaApp
+docker compose up -d postgres
+cd backend
+php artisan serve
+```
+
+Si PostgreSQL ya esta activo localmente, basta con:
+
+```powershell
+cd C:\Users\ameji\OneDrive\Desktop\PruebaApp\PruebaTecnicaApp\backend
+php artisan serve
 ```
 
 Setup backend automatizado en Windows:

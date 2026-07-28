@@ -117,3 +117,19 @@ Noticia inexistente:
   "message": "Noticia no encontrada."
 }
 ```
+
+Token ausente:
+
+```json
+{
+  "message": "Token ausente o no autenticado."
+}
+```
+
+Token invalido:
+
+```json
+{
+  "message": "Token invalido."
+}
+```

@@ -9,7 +9,23 @@ API REST Laravel para la app movil Android de noticias.
 - PostgreSQL
 - JWT con `php-open-source-saver/jwt-auth`
 
-## Instalacion
+## Ubicacion en consola
+
+Desde la raiz del repositorio:
+
+```powershell
+cd C:\Users\ameji\OneDrive\Desktop\PruebaApp\PruebaTecnicaApp
+```
+
+Para comandos Laravel manuales debes entrar a:
+
+```powershell
+cd backend
+```
+
+## Primera instalacion
+
+Usa esta ruta cuando clones el repositorio por primera vez o cuando no tengas `.env`, dependencias ni base preparada.
 
 Ruta rapida en Windows desde la raiz del repositorio:
 
@@ -17,7 +33,13 @@ Ruta rapida en Windows desde la raiz del repositorio:
 .\scripts\setup-backend.ps1
 ```
 
-Ruta manual:
+Si no usaras Docker porque ya tienes PostgreSQL instalado/local:
+
+```powershell
+.\scripts\setup-backend.ps1 -SkipDocker
+```
+
+Ruta manual desde `backend/`:
 
 ```bash
 composer install
@@ -26,6 +48,34 @@ php artisan key:generate
 php artisan jwt:secret
 php artisan migrate:fresh --seed
 php artisan serve
+```
+
+## Levantar entorno local ya configurado
+
+Usa esta ruta cuando ya ejecutaste la primera instalacion y solo quieres levantar el backend.
+
+Terminal 1, desde la raiz, si usas Docker para PostgreSQL:
+
+```powershell
+docker compose up -d postgres
+```
+
+Terminal 2, desde `backend/`:
+
+```powershell
+php artisan serve
+```
+
+API disponible:
+
+```text
+http://localhost:8000/api
+```
+
+Si cambiaste migraciones o seeders y quieres reconstruir datos demo:
+
+```powershell
+php artisan migrate:fresh --seed
 ```
 
 ## Variables principales
@@ -93,4 +143,10 @@ Authorization: Bearer <token>
 
 ```bash
 php artisan test
+```
+
+Estado actual esperado:
+
+```text
+14 tests passed
 ```

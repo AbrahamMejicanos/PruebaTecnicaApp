@@ -94,6 +94,19 @@ class NewsApiTest extends TestCase
             ->assertJsonMissingPath('data.0.body');
     }
 
+    public function test_recommended_news_returns_not_found_for_missing_news(): void
+    {
+        $user = $this->seedAndGetDemoUser();
+
+        $response = $this
+            ->actingAs($user, 'api')
+            ->getJson('/api/news/99999/recommended');
+
+        $response
+            ->assertNotFound()
+            ->assertJsonPath('message', 'Noticia no encontrada.');
+    }
+
     private function seedAndGetDemoUser(): User
     {
         $this->seed();
