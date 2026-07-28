@@ -34,6 +34,8 @@ class NewsApiTest extends TestCase
                     ],
                 ],
             ]);
+
+        $this->assertStringContainsString('/images/news/', $response->json('data.0.image_url'));
     }
 
     public function test_authenticated_user_can_show_news_detail(): void
@@ -60,6 +62,8 @@ class NewsApiTest extends TestCase
                     'category' => ['id', 'name', 'description'],
                 ],
             ]);
+
+        $this->assertStringContainsString('/images/news/', $response->json('data.image_url'));
     }
 
     public function test_news_detail_returns_not_found_for_missing_news(): void

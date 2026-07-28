@@ -31,7 +31,7 @@ describe('App', () => {
   it('renders the login screen when there is no stored token', async () => {
     const { findByText } = await render(<App />);
 
-    expect(await findByText('News Agentic')).toBeTruthy();
+    expect(await findByText('Prueba Abraham Mejicanos')).toBeTruthy();
     expect(await findByText('Iniciar sesion')).toBeTruthy();
   });
 });

@@ -42,7 +42,7 @@ export function LoginScreen() {
         </View>
 
         <View style={styles.copy}>
-          <Text style={[styles.title, { color: colors.text }]}>News Agentic</Text>
+          <Text style={[styles.title, { color: colors.text }]}>Prueba Abraham Mejicanos</Text>
           <Text style={[styles.subtitle, { color: colors.muted }]}>Accede a tus noticias protegidas.</Text>
         </View>
 

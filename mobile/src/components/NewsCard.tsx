@@ -27,13 +27,24 @@ export function NewsCard({ item, onPress, compact = false }: Props) {
         },
       ]}
     >
-      <Image source={{ uri: item.image_url }} style={compact ? styles.compactImage : styles.image} />
-      <View style={styles.body}>
-        <View style={styles.metaRow}>
-          <Text style={[styles.category, { color: colors.primary }]}>{item.category.name}</Text>
-          <Text style={[styles.date, { color: colors.muted }]}>{formatDate(item.published_at)}</Text>
+      <Image
+        resizeMode="cover"
+        source={{ uri: item.image_url }}
+        style={compact ? styles.compactImage : styles.image}
+      />
+      <View style={[styles.body, compact ? styles.compactBody : null]}>
+        <View style={[styles.metaRow, compact ? styles.compactMetaRow : null]}>
+          <Text numberOfLines={1} style={[styles.category, { color: colors.primary }]}>
+            {item.category.name}
+          </Text>
+          <Text numberOfLines={1} style={[styles.date, compact ? styles.compactDate : null, { color: colors.muted }]}>
+            {formatDate(item.published_at)}
+          </Text>
         </View>
-        <Text numberOfLines={compact ? 2 : 3} style={[styles.title, { color: colors.text }]}>
+        <Text
+          numberOfLines={compact ? 2 : 3}
+          style={[styles.title, compact ? styles.compactTitle : null, { color: colors.text }]}
+        >
           {item.title}
         </Text>
         {!compact ? (
@@ -52,24 +63,52 @@ const styles = StyleSheet.create({
     padding: 14,
   },
   card: {
+    alignSelf: 'stretch',
     borderRadius: 8,
     borderWidth: 1,
     marginBottom: 14,
     overflow: 'hidden',
+    width: '100%',
   },
   category: {
+    flex: 1,
+    flexShrink: 1,
     fontSize: 12,
     fontWeight: '800',
+    minWidth: 0,
     textTransform: 'uppercase',
   },
+  compactBody: {
+    flex: 1,
+    justifyContent: 'center',
+    minWidth: 0,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+  },
   compactCard: {
+    alignItems: 'stretch',
     flexDirection: 'row',
+    minHeight: 108,
+    width: '100%',
+  },
+  compactDate: {
+    maxWidth: 86,
   },
   compactImage: {
-    height: 116,
-    width: 112,
+    height: 108,
+    width: 94,
+  },
+  compactMetaRow: {
+    gap: 6,
+  },
+  compactTitle: {
+    flexShrink: 1,
+    fontSize: 15,
+    lineHeight: 20,
+    minWidth: 0,
   },
   date: {
+    flexShrink: 0,
     fontSize: 12,
   },
   excerpt: {
@@ -85,10 +124,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 10,
     justifyContent: 'space-between',
+    minWidth: 0,
   },
   title: {
+    flexShrink: 1,
     fontSize: 18,
     fontWeight: '800',
     lineHeight: 24,
+    minWidth: 0,
   },
 });

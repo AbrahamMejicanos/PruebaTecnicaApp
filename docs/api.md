@@ -92,7 +92,7 @@ Retorna lista de noticias con datos resumidos:
     {
       "id": 1,
       "title": "Titulo",
-      "image_url": "https://placehold.co/...",
+      "image_url": "http://localhost:8000/images/news/mobile-development.png",
       "excerpt": "Resumen",
       "published_at": "2026-07-28T06:00:00.000000Z",
       "category": {

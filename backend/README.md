@@ -216,7 +216,13 @@ El seeder crea:
 - Rol `superuser`
 - Usuario superusuario usando `SUPERUSER_NAME`, `SUPERUSER_EMAIL` y `SUPERUSER_PASSWORD`
 - 3 categorias
-- 8 noticias
+- 8 noticias con imagenes locales servidas desde `backend/public/images/news`
+
+Si ya tenias datos cargados y solo quieres actualizar las noticias demo para que usen las imagenes locales:
+
+```bash
+php artisan db:seed
+```
 
 ## Endpoints
 
