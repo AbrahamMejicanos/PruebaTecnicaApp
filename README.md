@@ -22,8 +22,10 @@ La prueba original mencionaba una aplicacion web, pero el criterio vigente es en
 
 ## Configuracion creada
 
-- Laravel instalado en `backend/`.
-- Paquete JWT instalado: `php-open-source-saver/jwt-auth`.
+- API Laravel funcional instalada en `backend/`.
+- Autenticacion JWT configurada con `php-open-source-saver/jwt-auth`.
+- Modelos, migraciones y seeders para usuarios, categorias y noticias.
+- Endpoints protegidos para noticias, recomendadas y categorias.
 - Expo React Native con TypeScript instalado en `mobile/`.
 - Dependencias moviles base instaladas: React Navigation, Axios y Expo Secure Store.
 - Dependencias de pruebas moviles instaladas: Jest Expo y React Native Testing Library.
@@ -38,9 +40,22 @@ cd backend
 composer install
 cp .env.example .env
 php artisan key:generate
-php artisan migrate
+php artisan jwt:secret
+php artisan migrate:fresh --seed
 php artisan serve
 php artisan test
+```
+
+Setup backend automatizado en Windows:
+
+```powershell
+.\scripts\setup-backend.ps1
+```
+
+Si ya tienes PostgreSQL levantado y no quieres usar Docker:
+
+```powershell
+.\scripts\setup-backend.ps1 -SkipDocker
 ```
 
 Mobile:
@@ -71,4 +86,4 @@ Email: demo@example.com
 Password: password
 ```
 
-La implementacion funcional de endpoints y pantallas se realizara en una rama de desarrollo despues del primer push de esta base.
+El backend ya cuenta con implementacion funcional. La siguiente fase natural es conectar el frontend movil a estos endpoints.
