@@ -3,7 +3,6 @@
 namespace Tests\Feature;
 
 use App\Models\News;
-use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -13,10 +12,10 @@ class NewsApiTest extends TestCase
 
     public function test_authenticated_user_can_list_news(): void
     {
-        $user = $this->seedAndGetDemoUser();
+        $headers = $this->seedAndGetAuthHeaders();
 
         $response = $this
-            ->actingAs($user, 'api')
+            ->withHeaders($headers)
             ->getJson('/api/news');
 
         $response
@@ -39,11 +38,11 @@ class NewsApiTest extends TestCase
 
     public function test_authenticated_user_can_show_news_detail(): void
     {
-        $user = $this->seedAndGetDemoUser();
+        $headers = $this->seedAndGetAuthHeaders();
         $news = News::query()->firstOrFail();
 
         $response = $this
-            ->actingAs($user, 'api')
+            ->withHeaders($headers)
             ->getJson("/api/news/{$news->id}");
 
         $response
@@ -65,10 +64,10 @@ class NewsApiTest extends TestCase
 
     public function test_news_detail_returns_not_found_for_missing_news(): void
     {
-        $user = $this->seedAndGetDemoUser();
+        $headers = $this->seedAndGetAuthHeaders();
 
         $response = $this
-            ->actingAs($user, 'api')
+            ->withHeaders($headers)
             ->getJson('/api/news/99999');
 
         $response
@@ -78,13 +77,13 @@ class NewsApiTest extends TestCase
 
     public function test_authenticated_user_can_fetch_recommended_news(): void
     {
-        $user = $this->seedAndGetDemoUser();
+        $headers = $this->seedAndGetAuthHeaders();
         $news = News::query()
             ->whereHas('category', fn ($query) => $query->where('name', 'Tecnologia'))
             ->firstOrFail();
 
         $response = $this
-            ->actingAs($user, 'api')
+            ->withHeaders($headers)
             ->getJson("/api/news/{$news->id}/recommended");
 
         $response
@@ -96,10 +95,10 @@ class NewsApiTest extends TestCase
 
     public function test_recommended_news_returns_not_found_for_missing_news(): void
     {
-        $user = $this->seedAndGetDemoUser();
+        $headers = $this->seedAndGetAuthHeaders();
 
         $response = $this
-            ->actingAs($user, 'api')
+            ->withHeaders($headers)
             ->getJson('/api/news/99999/recommended');
 
         $response
@@ -107,10 +106,20 @@ class NewsApiTest extends TestCase
             ->assertJsonPath('message', 'Noticia no encontrada.');
     }
 
-    private function seedAndGetDemoUser(): User
+    /**
+     * @return array<string, string>
+     */
+    private function seedAndGetAuthHeaders(): array
     {
         $this->seed();
 
-        return User::query()->where('email', (string) env('SUPERUSER_EMAIL'))->firstOrFail();
+        $response = $this->postJson('/api/login', [
+            'email' => (string) env('SUPERUSER_EMAIL'),
+            'password' => (string) env('SUPERUSER_PASSWORD'),
+        ]);
+
+        return [
+            'Authorization' => 'Bearer '.$response->json('data.token'),
+        ];
     }
 }

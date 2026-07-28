@@ -25,6 +25,8 @@ Body:
 }
 ```
 
+Nota de seguridad: cada usuario solo mantiene un token activo. Si el mismo usuario inicia sesion otra vez, el token anterior queda reemplazado y los endpoints protegidos responderan `401`.
+
 Respuesta:
 
 ```json
@@ -160,5 +162,13 @@ Token invalido:
 ```json
 {
   "message": "Token invalido."
+}
+```
+
+Sesion reemplazada por un nuevo login:
+
+```json
+{
+  "message": "Sesion reemplazada por un nuevo inicio de sesion."
 }
 ```

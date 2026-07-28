@@ -67,11 +67,10 @@ class AuthApiTest extends TestCase
 
     public function test_authenticated_user_can_fetch_profile(): void
     {
-        $this->seed();
-        $user = User::query()->where('email', (string) env('SUPERUSER_EMAIL'))->firstOrFail();
+        $token = $this->loginAndGetToken();
 
         $response = $this
-            ->actingAs($user, 'api')
+            ->withHeader('Authorization', "Bearer {$token}")
             ->getJson('/api/me');
 
         $response
@@ -104,6 +103,61 @@ class AuthApiTest extends TestCase
             ->assertJsonPath('data.user.role.slug', 'superuser');
     }
 
+    public function test_second_login_replaces_previous_token_for_same_user(): void
+    {
+        $this->seed();
+
+        $firstLogin = $this->postJson('/api/login', [
+            'email' => (string) env('SUPERUSER_EMAIL'),
+            'password' => (string) env('SUPERUSER_PASSWORD'),
+        ]);
+
+        $secondLogin = $this->postJson('/api/login', [
+            'email' => (string) env('SUPERUSER_EMAIL'),
+            'password' => (string) env('SUPERUSER_PASSWORD'),
+        ]);
+
+        $firstToken = $firstLogin->json('data.token');
+        $secondToken = $secondLogin->json('data.token');
+
+        $this
+            ->withHeader('Authorization', "Bearer {$firstToken}")
+            ->getJson('/api/me')
+            ->assertUnauthorized()
+            ->assertJsonPath('message', 'Sesion reemplazada por un nuevo inicio de sesion.');
+
+        $this
+            ->withHeader('Authorization', "Bearer {$secondToken}")
+            ->getJson('/api/me')
+            ->assertOk()
+            ->assertJsonPath('data.email', (string) env('SUPERUSER_EMAIL'));
+    }
+
+    public function test_logout_clears_active_session_for_that_user(): void
+    {
+        $this->seed();
+
+        $login = $this->postJson('/api/login', [
+            'email' => (string) env('SUPERUSER_EMAIL'),
+            'password' => (string) env('SUPERUSER_PASSWORD'),
+        ]);
+
+        $token = $login->json('data.token');
+
+        $this
+            ->withHeader('Authorization', "Bearer {$token}")
+            ->postJson('/api/logout')
+            ->assertOk();
+
+        $this
+            ->withHeader('Authorization', "Bearer {$token}")
+            ->getJson('/api/me')
+            ->assertUnauthorized()
+            ->assertJsonPath('message', 'Token invalido.');
+
+        $this->assertNull(User::query()->where('email', (string) env('SUPERUSER_EMAIL'))->firstOrFail()->active_jwt_id);
+    }
+
     public function test_protected_routes_reject_requests_without_token(): void
     {
         $response = $this->getJson('/api/news');
@@ -122,5 +176,17 @@ class AuthApiTest extends TestCase
         $response
             ->assertUnauthorized()
             ->assertJsonPath('message', 'Token invalido.');
+    }
+
+    private function loginAndGetToken(): string
+    {
+        $this->seed();
+
+        $response = $this->postJson('/api/login', [
+            'email' => (string) env('SUPERUSER_EMAIL'),
+            'password' => (string) env('SUPERUSER_PASSWORD'),
+        ]);
+
+        return $response->json('data.token');
     }
 }

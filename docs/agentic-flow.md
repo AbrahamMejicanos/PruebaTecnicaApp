@@ -31,6 +31,7 @@
 - Se agrego `UserResource` para respuestas limpias de usuario.
 - Se personalizaron mensajes para token ausente, invalido y expirado.
 - Se agrego manejo de roles con rol inicial `superuser` y credenciales configurables por `.env`.
+- Se agrego control de sesion unica por usuario mediante `active_jwt_id`.
 
 ## Frontend Mobile
 

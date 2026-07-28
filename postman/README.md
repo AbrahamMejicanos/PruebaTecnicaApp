@@ -23,5 +23,6 @@ Para validar seguridad:
 - `04 Security / Sin token - noticias bloqueado`
 - `04 Security / Sin token - categorias bloqueado`
 - `04 Security / Token invalido - noticias bloqueado`
+- Ejecuta `Login correcto - guarda token`, copia el token, ejecuta login otra vez, e intenta usar el token viejo para validar sesion reemplazada.
 - `01 Auth / Logout - invalida token`
 - `04 Security / Despues de logout - token viejo bloqueado`

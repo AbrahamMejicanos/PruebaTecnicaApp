@@ -217,6 +217,8 @@ Todos los endpoints protegidos usan header:
 Authorization: Bearer <token>
 ```
 
+Por seguridad, cada usuario tiene una unica sesion JWT activa. Si el mismo usuario inicia sesion una segunda vez, el token anterior queda reemplazado.
+
 | Metodo | Endpoint | Auth | Descripcion |
 | --- | --- | --- | --- |
 | POST | `/api/login` | No | Autentica usuario y retorna JWT. |
