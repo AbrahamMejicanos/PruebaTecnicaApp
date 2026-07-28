@@ -70,3 +70,18 @@ php artisan migrate:fresh --seed
 ```
 
 El seeder crea el rol `superuser`, un usuario superusuario desde variables `.env`, 3 categorias y 8 noticias.
+
+## Docker
+
+El repositorio incluye una opcion Docker completa:
+
+- `docker-compose.yml`: orquesta backend Laravel y PostgreSQL.
+- `backend/Dockerfile`: instala PHP 8.3, extensiones PostgreSQL y Composer.
+- `backend/docker/entrypoint.sh`: prepara `.env`, instala dependencias, espera PostgreSQL, migra y ejecuta seeders.
+- `.env.docker.example`: variables para PostgreSQL y superusuario.
+
+Comando principal:
+
+```bash
+docker compose --env-file .env.docker up --build
+```

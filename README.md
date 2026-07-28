@@ -33,6 +33,24 @@ La prueba original mencionaba una aplicacion web, pero el criterio vigente es en
 
 ## Comandos utiles
 
+Backend con Docker completo, desde la raiz del repo:
+
+```powershell
+copy .env.docker.example .env.docker
+```
+
+Edita `.env.docker` y configura `SUPERUSER_EMAIL` / `SUPERUSER_PASSWORD`. Luego:
+
+```powershell
+docker compose --env-file .env.docker up --build
+```
+
+Esto levanta PostgreSQL, instala dependencias PHP dentro del contenedor, ejecuta migraciones/seeders y publica la API en:
+
+```text
+http://localhost:8000/api
+```
+
 Backend, primera instalacion desde la raiz del repo:
 
 ```powershell
@@ -83,6 +101,17 @@ cd C:\Users\ameji\OneDrive\Desktop\PruebaApp\PruebaTecnicaApp\backend
 php artisan serve
 ```
 
+Para usar una base PostgreSQL local existente, configura `backend/.env` con los datos equivalentes:
+
+```env
+DB_CONNECTION=pgsql
+DB_HOST=127.0.0.1
+DB_PORT=5432
+DB_DATABASE=industrias_ciclon_db
+DB_USERNAME=postgres
+DB_PASSWORD=tu-password-local
+```
+
 Setup backend automatizado en Windows:
 
 ```powershell
@@ -107,7 +136,7 @@ npm test
 PostgreSQL con Docker:
 
 ```bash
-docker compose up -d postgres
+docker compose --env-file .env.docker up postgres
 ```
 
 ## Flujo de ramas sugerido

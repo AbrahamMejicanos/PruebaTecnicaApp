@@ -27,6 +27,48 @@ cd backend
 
 Usa esta ruta cuando clones el repositorio por primera vez o cuando no tengas `.env`, dependencias ni base preparada.
 
+## Opcion Docker completa
+
+Desde la raiz del repositorio:
+
+```powershell
+copy .env.docker.example .env.docker
+```
+
+Edita `.env.docker`:
+
+```env
+POSTGRES_DB=news_agentic
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres
+POSTGRES_PORT=5432
+
+SUPERUSER_NAME="Tu Nombre"
+SUPERUSER_EMAIL="tu-correo@example.com"
+SUPERUSER_PASSWORD="tu-password-seguro"
+```
+
+Si ya tienes PostgreSQL local usando `5432`, puedes cambiar el puerto publicado por Docker:
+
+```env
+POSTGRES_PORT=5433
+```
+
+Levanta backend + PostgreSQL:
+
+```powershell
+docker compose --env-file .env.docker up --build
+```
+
+El contenedor backend:
+
+- Instala dependencias Composer si faltan.
+- Genera `APP_KEY` y `JWT_SECRET` si faltan.
+- Espera a PostgreSQL.
+- Ejecuta migraciones.
+- Ejecuta seeders.
+- Sirve Laravel en `http://localhost:8000`.
+
 Ruta rapida en Windows desde la raiz del repositorio:
 
 ```powershell
@@ -113,7 +155,7 @@ SUPERUSER_PASSWORD=tu-password-seguro
 
 ## Base de datos
 
-La base de datos esperada es PostgreSQL:
+La base de datos esperada es PostgreSQL. Con Docker, los valores por defecto son:
 
 ```text
 database: news_agentic
@@ -125,8 +167,34 @@ port: 5432
 Puedes levantarla con Docker desde la raiz:
 
 ```bash
-docker compose up -d postgres
+docker compose --env-file .env.docker up postgres
 ```
+
+Si ya tienes PostgreSQL local, configura `backend/.env` con tus credenciales. Por ejemplo, una URL tipo:
+
+```text
+postgresql+psycopg2://usuario:password@localhost:5432/base
+```
+
+se traduce en Laravel como:
+
+```env
+DB_CONNECTION=pgsql
+DB_HOST=127.0.0.1
+DB_PORT=5432
+DB_DATABASE=base
+DB_USERNAME=usuario
+DB_PASSWORD=password
+```
+
+Para tu base local, el nombre de base seria:
+
+```env
+DB_DATABASE=industrias_ciclon_db
+DB_USERNAME=postgres
+```
+
+Completa `DB_PASSWORD` solo en tu `.env` local, no en archivos versionados.
 
 Las tablas se crean con migraciones Laravel:
 

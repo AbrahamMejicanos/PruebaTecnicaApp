@@ -17,6 +17,7 @@
 - Dependencias locales revisadas: Node/npm disponibles; PHP instalado por WinGet.
 - `docker-compose.yml` disponible para PostgreSQL.
 - Scripts de setup backend creados en `scripts/setup-backend.ps1` y `scripts/setup-backend.sh`.
+- Docker completo agregado para backend Laravel + PostgreSQL con `.env.docker.example`.
 
 ## Backend
 
