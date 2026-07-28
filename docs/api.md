@@ -20,8 +20,8 @@ Body:
 
 ```json
 {
-  "email": "demo@example.com",
-  "password": "password"
+  "email": "tu-correo@example.com",
+  "password": "tu-password-seguro"
 }
 ```
 
@@ -35,8 +35,13 @@ Respuesta:
     "expires_in": 3600,
     "user": {
       "id": 1,
-      "name": "Demo User",
-      "email": "demo@example.com"
+      "name": "Tu Nombre",
+      "email": "tu-correo@example.com",
+      "role": {
+        "id": 1,
+        "name": "Superusuario",
+        "slug": "superuser"
+      }
     }
   },
   "message": "OK"

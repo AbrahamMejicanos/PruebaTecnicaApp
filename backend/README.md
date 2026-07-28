@@ -33,6 +33,8 @@ Ruta rapida en Windows desde la raiz del repositorio:
 .\scripts\setup-backend.ps1
 ```
 
+El script pedira nombre, email y password del superusuario si no estan definidos en `backend/.env`.
+
 Si no usaras Docker porque ya tienes PostgreSQL instalado/local:
 
 ```powershell
@@ -44,6 +46,19 @@ Ruta manual desde `backend/`:
 ```bash
 composer install
 cp .env.example .env
+```
+
+Edita `backend/.env` y configura:
+
+```env
+SUPERUSER_NAME="Tu Nombre"
+SUPERUSER_EMAIL=tu-correo@example.com
+SUPERUSER_PASSWORD=tu-password-seguro
+```
+
+Luego ejecuta:
+
+```bash
 php artisan key:generate
 php artisan jwt:secret
 php artisan migrate:fresh --seed
@@ -90,6 +105,10 @@ DB_USERNAME=postgres
 DB_PASSWORD=postgres
 JWT_SECRET=
 JWT_TTL=60
+
+SUPERUSER_NAME="Tu Nombre"
+SUPERUSER_EMAIL=tu-correo@example.com
+SUPERUSER_PASSWORD=tu-password-seguro
 ```
 
 ## Base de datos
@@ -117,7 +136,8 @@ php artisan migrate:fresh --seed
 
 El seeder crea:
 
-- Usuario demo: `demo@example.com / password`
+- Rol `superuser`
+- Usuario superusuario usando `SUPERUSER_NAME`, `SUPERUSER_EMAIL` y `SUPERUSER_PASSWORD`
 - 3 categorias
 - 8 noticias
 

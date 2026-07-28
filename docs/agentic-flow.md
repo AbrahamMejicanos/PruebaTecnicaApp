@@ -29,6 +29,7 @@
 - Feature tests cubren autenticacion, rutas protegidas, noticias, recomendadas y categorias.
 - Se agrego `UserResource` para respuestas limpias de usuario.
 - Se personalizaron mensajes para token ausente, invalido y expirado.
+- Se agrego manejo de roles con rol inicial `superuser` y credenciales configurables por `.env`.
 
 ## Frontend Mobile
 

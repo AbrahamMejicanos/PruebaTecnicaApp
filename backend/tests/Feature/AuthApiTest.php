@@ -15,8 +15,8 @@ class AuthApiTest extends TestCase
         $this->seed();
 
         $response = $this->postJson('/api/login', [
-            'email' => 'demo@example.com',
-            'password' => 'password',
+            'email' => (string) env('SUPERUSER_EMAIL'),
+            'password' => (string) env('SUPERUSER_PASSWORD'),
         ]);
 
         $response
@@ -27,9 +27,15 @@ class AuthApiTest extends TestCase
                     'token',
                     'token_type',
                     'expires_in',
-                    'user' => ['id', 'name', 'email'],
+                    'user' => [
+                        'id',
+                        'name',
+                        'email',
+                        'role' => ['id', 'name', 'slug'],
+                    ],
                 ],
             ])
+            ->assertJsonPath('data.user.role.slug', 'superuser')
             ->assertJsonMissingPath('data.user.created_at')
             ->assertJsonMissingPath('data.user.updated_at');
     }
@@ -50,7 +56,7 @@ class AuthApiTest extends TestCase
         $this->seed();
 
         $response = $this->postJson('/api/login', [
-            'email' => 'demo@example.com',
+            'email' => (string) env('SUPERUSER_EMAIL'),
             'password' => 'wrong-password',
         ]);
 
@@ -62,7 +68,7 @@ class AuthApiTest extends TestCase
     public function test_authenticated_user_can_fetch_profile(): void
     {
         $this->seed();
-        $user = User::query()->where('email', 'demo@example.com')->firstOrFail();
+        $user = User::query()->where('email', (string) env('SUPERUSER_EMAIL'))->firstOrFail();
 
         $response = $this
             ->actingAs($user, 'api')
@@ -70,7 +76,8 @@ class AuthApiTest extends TestCase
 
         $response
             ->assertOk()
-            ->assertJsonPath('data.email', 'demo@example.com')
+            ->assertJsonPath('data.email', (string) env('SUPERUSER_EMAIL'))
+            ->assertJsonPath('data.role.slug', 'superuser')
             ->assertJsonMissingPath('data.created_at')
             ->assertJsonMissingPath('data.updated_at');
     }

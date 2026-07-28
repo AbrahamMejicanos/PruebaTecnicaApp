@@ -111,6 +111,6 @@ class NewsApiTest extends TestCase
     {
         $this->seed();
 
-        return User::query()->where('email', 'demo@example.com')->firstOrFail();
+        return User::query()->where('email', (string) env('SUPERUSER_EMAIL'))->firstOrFail();
     }
 }

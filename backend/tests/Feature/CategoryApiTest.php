@@ -13,7 +13,7 @@ class CategoryApiTest extends TestCase
     public function test_authenticated_user_can_list_categories(): void
     {
         $this->seed();
-        $user = User::query()->where('email', 'demo@example.com')->firstOrFail();
+        $user = User::query()->where('email', (string) env('SUPERUSER_EMAIL'))->firstOrFail();
 
         $response = $this
             ->actingAs($user, 'api')

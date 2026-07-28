@@ -31,9 +31,17 @@ PruebaTecnicaApp/
 ```text
 users
   id
+  role_id
   name
   email
   password
+  timestamps
+
+roles
+  id
+  name
+  slug
+  description
   timestamps
 
 categories
@@ -61,4 +69,4 @@ La base se reconstruye con:
 php artisan migrate:fresh --seed
 ```
 
-El seeder crea un usuario demo, 3 categorias y 8 noticias.
+El seeder crea el rol `superuser`, un usuario superusuario desde variables `.env`, 3 categorias y 8 noticias.

@@ -39,12 +39,27 @@ Backend, primera instalacion desde la raiz del repo:
 .\scripts\setup-backend.ps1
 ```
 
+El script te pedira credenciales del superusuario si no existen en `backend/.env`.
+
 Backend, primera instalacion manual desde `backend/`:
 
 ```bash
 cd backend
 composer install
 cp .env.example .env
+```
+
+Antes de sembrar la base, edita `backend/.env`:
+
+```env
+SUPERUSER_NAME="Tu Nombre"
+SUPERUSER_EMAIL=tu-correo@example.com
+SUPERUSER_PASSWORD=tu-password-seguro
+```
+
+Luego continua:
+
+```bash
 php artisan key:generate
 php artisan jwt:secret
 php artisan migrate:fresh --seed
@@ -101,11 +116,8 @@ docker compose up -d postgres
 2. Crear una rama de desarrollo, por ejemplo `develop`.
 3. Implementar por capas: backend funcional, mobile funcional, pruebas y documentacion final.
 
-## Credenciales demo esperadas
+## Credenciales de acceso
 
-```text
-Email: demo@example.com
-Password: password
-```
+El acceso se crea desde las variables `SUPERUSER_NAME`, `SUPERUSER_EMAIL` y `SUPERUSER_PASSWORD` en `backend/.env`. No hay credenciales de login quemadas en el codigo.
 
 El backend ya cuenta con implementacion funcional. La siguiente fase natural es conectar el frontend movil a estos endpoints.

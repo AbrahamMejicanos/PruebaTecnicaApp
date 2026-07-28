@@ -26,7 +26,7 @@ class AuthController extends Controller
                 'token' => $token,
                 'token_type' => 'bearer',
                 'expires_in' => auth('api')->factory()->getTTL() * 60,
-                'user' => new UserResource(auth('api')->user()),
+                'user' => new UserResource(auth('api')->user()->load('role')),
             ],
             'message' => 'OK',
         ]);
@@ -35,7 +35,7 @@ class AuthController extends Controller
     public function me(): JsonResponse
     {
         return response()->json([
-            'data' => new UserResource(auth('api')->user()),
+            'data' => new UserResource(auth('api')->user()->load('role')),
             'message' => 'OK',
         ]);
     }

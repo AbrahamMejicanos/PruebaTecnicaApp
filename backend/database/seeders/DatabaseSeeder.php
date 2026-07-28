@@ -4,10 +4,12 @@ namespace Database\Seeders;
 
 use App\Models\Category;
 use App\Models\News;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Carbon;
+use RuntimeException;
 
 class DatabaseSeeder extends Seeder
 {
@@ -18,11 +20,27 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        User::query()->updateOrCreate([
-            'email' => 'demo@example.com',
+        $superuserEmail = env('SUPERUSER_EMAIL');
+        $superuserPassword = env('SUPERUSER_PASSWORD');
+        $superuserName = env('SUPERUSER_NAME', 'Super Usuario');
+
+        if (! $superuserEmail || ! $superuserPassword) {
+            throw new RuntimeException('Configura SUPERUSER_EMAIL y SUPERUSER_PASSWORD en backend/.env antes de ejecutar seeders.');
+        }
+
+        $superuserRole = Role::query()->updateOrCreate([
+            'slug' => 'superuser',
         ], [
-            'name' => 'Demo User',
-            'password' => 'password',
+            'name' => 'Superusuario',
+            'description' => 'Acceso principal para administrar y validar la aplicacion.',
+        ]);
+
+        User::query()->updateOrCreate([
+            'email' => $superuserEmail,
+        ], [
+            'role_id' => $superuserRole->id,
+            'name' => $superuserName,
+            'password' => $superuserPassword,
         ]);
 
         $categories = collect([

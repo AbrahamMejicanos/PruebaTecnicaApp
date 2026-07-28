@@ -30,6 +30,9 @@
         <env name="QUEUE_CONNECTION" value="sync"/>
         <env name="SESSION_DRIVER" value="array"/>
         <env name="JWT_SECRET" value="testing-secret-key-for-news-agentic-app"/>
+        <env name="SUPERUSER_NAME" value="Test Superuser"/>
+        <env name="SUPERUSER_EMAIL" value="superuser@example.com"/>
+        <env name="SUPERUSER_PASSWORD" value="password"/>
         <env name="PULSE_ENABLED" value="false"/>
         <env name="TELESCOPE_ENABLED" value="false"/>
         <env name="NIGHTWATCH_ENABLED" value="false"/>
