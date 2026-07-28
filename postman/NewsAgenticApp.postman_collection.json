@@ -253,6 +253,7 @@
                   "});",
                   "pm.test('Sesion cerrada', function () {",
                   "  pm.expect(pm.response.json().message).to.eql('Sesion cerrada.');",
+                  "  pm.expect(pm.response.json().data.user.email).to.eql(pm.environment.get('email'));",
                   "});"
                 ]
               }

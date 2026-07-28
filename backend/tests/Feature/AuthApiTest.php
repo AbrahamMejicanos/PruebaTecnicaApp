@@ -82,6 +82,28 @@ class AuthApiTest extends TestCase
             ->assertJsonMissingPath('data.updated_at');
     }
 
+    public function test_logout_returns_the_user_that_closed_session(): void
+    {
+        $this->seed();
+
+        $login = $this->postJson('/api/login', [
+            'email' => (string) env('SUPERUSER_EMAIL'),
+            'password' => (string) env('SUPERUSER_PASSWORD'),
+        ]);
+
+        $token = $login->json('data.token');
+
+        $response = $this
+            ->withHeader('Authorization', "Bearer {$token}")
+            ->postJson('/api/logout');
+
+        $response
+            ->assertOk()
+            ->assertJsonPath('message', 'Sesion cerrada.')
+            ->assertJsonPath('data.user.email', (string) env('SUPERUSER_EMAIL'))
+            ->assertJsonPath('data.user.role.slug', 'superuser');
+    }
+
     public function test_protected_routes_reject_requests_without_token(): void
     {
         $response = $this->getJson('/api/news');

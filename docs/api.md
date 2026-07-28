@@ -54,6 +54,30 @@ Respuesta:
 Authorization: Bearer <token>
 ```
 
+### POST `/api/logout`
+
+No requiere body. El token enviado en `Authorization` identifica la sesion a cerrar.
+
+Respuesta:
+
+```json
+{
+  "data": {
+    "user": {
+      "id": 1,
+      "name": "Tu Nombre",
+      "email": "tu-correo@example.com",
+      "role": {
+        "id": 1,
+        "name": "Superusuario",
+        "slug": "superuser"
+      }
+    }
+  },
+  "message": "Sesion cerrada."
+}
+```
+
 ## Noticias
 
 ### GET `/api/news`
