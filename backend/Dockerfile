@@ -19,11 +19,13 @@ RUN apt-get update \
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 COPY composer.json composer.lock ./
-RUN composer install --no-interaction --prefer-dist --optimize-autoloader
+RUN composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
 
 COPY . .
 COPY docker/entrypoint.sh /usr/local/bin/backend-entrypoint
-RUN chmod +x /usr/local/bin/backend-entrypoint
+RUN chmod +x /usr/local/bin/backend-entrypoint \
+    && mkdir -p public/uploads storage/framework/cache storage/framework/sessions storage/framework/views storage/logs \
+    && chown -R www-data:www-data public/uploads storage bootstrap/cache
 
 EXPOSE 8000
 

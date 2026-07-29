@@ -31,8 +31,8 @@ Usa esta ruta cuando clones el repositorio por primera vez o cuando no tengas `.
 
 Desde la raiz del repositorio:
 
-```powershell
-copy .env.docker.example .env.docker
+```bash
+cp .env.docker.example .env.docker
 ```
 
 Edita `.env.docker`:
@@ -43,9 +43,20 @@ POSTGRES_USER=postgres
 POSTGRES_PASSWORD=postgres
 POSTGRES_PORT=5432
 
+BACKEND_PORT=8000
+APP_ENV=production
+APP_DEBUG=false
+APP_URL=http://localhost:8000
+
 SUPERUSER_NAME="Tu Nombre"
 SUPERUSER_EMAIL="tu-correo@example.com"
 SUPERUSER_PASSWORD="tu-password-seguro"
+```
+
+En EC2 cambia `APP_URL` por la IP publica o dominio:
+
+```env
+APP_URL=http://TU_IP_O_DOMINIO:8000
 ```
 
 Si ya tienes PostgreSQL local usando `5432`, puedes cambiar el puerto publicado por Docker:
@@ -56,18 +67,25 @@ POSTGRES_PORT=5433
 
 Levanta backend + PostgreSQL:
 
-```powershell
-docker compose --env-file .env.docker up --build
+```bash
+docker compose --env-file .env.docker up -d --build
 ```
 
 El contenedor backend:
 
-- Instala dependencias Composer si faltan.
+- Incluye dependencias Composer dentro de la imagen.
 - Genera `APP_KEY` y `JWT_SECRET` si faltan.
 - Espera a PostgreSQL.
 - Ejecuta migraciones.
 - Ejecuta seeders.
 - Sirve Laravel en `http://localhost:8000`.
+- Persiste PostgreSQL y `public/uploads` en volumenes Docker.
+
+Para ver logs:
+
+```bash
+docker compose --env-file .env.docker logs -f backend
+```
 
 Ruta rapida en Windows desde la raiz del repositorio:
 

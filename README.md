@@ -39,25 +39,82 @@ La prueba original mencionaba una aplicacion web, pero el criterio vigente es en
 - Dependencias de pruebas moviles instaladas: Jest Expo y React Native Testing Library.
 - `docker-compose.yml` preparado para PostgreSQL local.
 
-## Comandos utiles
+## Despliegue Docker backend
 
-Backend con Docker completo, desde la raiz del repo:
+El backend queda preparado para correr igual en local y en un servidor Ubuntu/EC2. Desde la raiz del repo:
 
-```powershell
-copy .env.docker.example .env.docker
+```bash
+cp .env.docker.example .env.docker
 ```
 
-Edita `.env.docker` y configura `SUPERUSER_EMAIL` / `SUPERUSER_PASSWORD`. Luego:
+Edita `.env.docker`. Para local puedes dejar `APP_URL=http://localhost:8000`. En EC2 usa la IP publica o dominio del servidor:
 
-```powershell
-docker compose --env-file .env.docker up --build
+```env
+APP_URL=http://TU_IP_O_DOMINIO:8000
+SUPERUSER_EMAIL=tu-correo@example.com
+SUPERUSER_PASSWORD=tu-password-seguro
 ```
 
-Esto levanta PostgreSQL, instala dependencias PHP dentro del contenedor, ejecuta migraciones/seeders y publica la API en:
+Luego levanta todo:
+
+```bash
+docker compose --env-file .env.docker up -d --build
+```
+
+Esto levanta PostgreSQL y Laravel, espera la base de datos, ejecuta migraciones/seeders y publica la API en:
 
 ```text
 http://localhost:8000/api
 ```
+
+En EC2 abre el puerto `8000` en el Security Group si vas a exponer Laravel directamente. Si usas Nginx o un proxy, apunta `APP_URL` al dominio final.
+
+Para ver logs:
+
+```bash
+docker compose --env-file .env.docker logs -f backend
+```
+
+Para reiniciar desde cero, eliminando datos de base y uploads:
+
+```bash
+docker compose --env-file .env.docker down -v
+docker compose --env-file .env.docker up -d --build
+```
+
+## Generar APK
+
+Antes de generar el APK, configura la URL de API que quedara embebida en la app:
+
+```bash
+cd mobile
+cp .env.example .env
+```
+
+Para emulador local:
+
+```env
+EXPO_PUBLIC_API_URL=http://10.0.2.2:8000/api
+```
+
+Para entregar APK apuntando al EC2:
+
+```env
+EXPO_PUBLIC_API_URL=http://TU_IP_O_DOMINIO:8000/api
+```
+
+Con Expo EAS:
+
+```bash
+cd mobile
+npm install
+npx eas-cli login
+npx eas-cli build -p android --profile preview
+```
+
+El perfil `preview` genera un APK. Al terminar, EAS muestra un link de descarga del `.apk`.
+
+## Comandos utiles
 
 Backend, primera instalacion desde la raiz del repo:
 

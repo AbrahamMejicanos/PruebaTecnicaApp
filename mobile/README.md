@@ -35,6 +35,37 @@ EXPO_PUBLIC_API_URL=http://10.0.2.2:8000/api
 
 Para dispositivo fisico, reemplazar `10.0.2.2` por la IP local de la computadora.
 
+Para un APK que se entregara a revision usando backend en EC2, `.env` debe apuntar a la IP publica o dominio del servidor:
+
+```env
+EXPO_PUBLIC_API_URL=http://TU_IP_O_DOMINIO:8000/api
+```
+
+## Generar APK
+
+Este proyecto incluye `eas.json` con perfil `preview` para generar APK.
+
+```bash
+cd mobile
+npm install
+cp .env.example .env
+```
+
+Edita `.env` con la URL real del backend. Luego:
+
+```bash
+npx eas-cli login
+npx eas-cli build -p android --profile preview
+```
+
+Cuando EAS termine, descarga el `.apk` desde el link que imprime la consola.
+
+Alternativa con build local, si tienes Android SDK/JDK configurados:
+
+```bash
+npx eas-cli build -p android --profile preview --local
+```
+
 ## Emulador Android
 
 Estado configurado en esta maquina:
